@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FhmApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(FhmApplication.class, args);
     }
 
