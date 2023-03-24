@@ -12,8 +12,8 @@ public class Word {
     @Column(name = "word_id", insertable = false)
     private int wordId;
 
-    @Column(name = "word_category", nullable = false)
-    private String wordCategory;
+    @Column(name = "category", nullable = false)
+    private String category;
 
     @Column(name = "word", nullable = false)
     private String word;
@@ -24,9 +24,9 @@ public class Word {
     public Word(int wordId) {
     }
 
-    public Word(int wordId, String wordCategory, String word) {
+    public Word(int wordId, String category, String word) {
         this.wordId = wordId;
-        this.wordCategory = wordCategory;
+        this.category = category;
         this.word = word;
     }
 
@@ -38,12 +38,12 @@ public class Word {
         this.wordId = wordId;
     }
 
-    public String getWordCategory() {
-        return wordCategory;
+    public String getCategory() {
+        return category;
     }
 
-    public void setWordCategory(String wordCategory) {
-        this.wordCategory = wordCategory;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public String getWord() {
@@ -57,21 +57,21 @@ public class Word {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Word)) return false;
         Word word1 = (Word) o;
-        return wordId == word1.wordId && Objects.equals(wordCategory, word1.wordCategory) && Objects.equals(word, word1.word);
+        return Objects.equals(category, word1.category) && Objects.equals(word, word1.word);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(wordId, wordCategory, word);
+        return Objects.hash(category, word);
     }
 
     @Override
     public String toString() {
         return "Word{" +
                 "wordId=" + wordId +
-                ", wordCategory='" + wordCategory + '\'' +
+                ", category='" + category + '\'' +
                 ", word='" + word + '\'' +
                 '}';
     }

@@ -8,7 +8,7 @@ COMMIT;
 CREATE TABLE team (
 	team_id SERIAL PRIMARY KEY,
 	team_name VARCHAR(255) NOT NULL,
-	team_turn VARCHAR(255) NOT NULL,
+	team_turn INTEGER NOT NULL,
 	total_score INTEGER NOT NULL
 );
 
@@ -29,3 +29,4 @@ WHERE team_name;
 
 SELECT *
 FROM team;
+where team_id = 1;

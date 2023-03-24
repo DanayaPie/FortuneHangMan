@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -21,6 +20,21 @@ public class TeamDao {
     private EntityManager entityManager;
 
     @Transactional
+    public Team addTeam(String teamName, int teamTurn, int teamScore) {
+        logger.info("TeamDao.addTeam() invoked");
+
+        Team teamToAdd = new Team();
+
+        teamToAdd.setTeamName(teamName);
+        teamToAdd.setTeamTurn(teamTurn);
+        teamToAdd.setTotalScore(teamScore);
+
+        this.entityManager.persist(teamToAdd);
+
+        return teamToAdd;
+    }
+
+    @Transactional
     public List<Team> getAllTeams() {
         logger.info("TeamDao.getAllTeams() invoked");
 
@@ -31,6 +45,21 @@ public class TeamDao {
         } catch (NoResultException e) {
             e.printStackTrace();
 
+            return null;
+        }
+    }
+
+    @Transactional
+    public Team getTeamByTeamId(int teamId) {
+        logger.info("TeamDao.getTeamByTeamId() invoked");
+
+        try {
+            Team teamToGet = entityManager.createQuery("FROM Team t WHERE t.teamId = :teamId", Team.class)
+                    .setParameter("teamId", teamId)
+                    .getSingleResult();
+
+            return teamToGet;
+        } catch (NoResultException e) {
             return null;
         }
     }

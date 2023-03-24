@@ -24,7 +24,7 @@ CREATE TABLE round (
 INSERT INTO round (
 	team_id, round_score, spin_score, spin_token 
 ) VALUES 
-	(1, 0, 0, false)
+	(1, 1, 0, false)
 
 
 -- ===== INSERT
