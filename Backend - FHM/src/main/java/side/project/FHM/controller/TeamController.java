@@ -21,19 +21,6 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @PostMapping(path = "/team")
-    public ResponseEntity<Object> addTeam(@RequestBody Map<String, String> json) {
-        logger.info("TeamController.addTeam() invoked");
-
-        try {
-            Team teamToAdd = teamService.addTeam(json.get("teamName"), json.get("teamTurn"));
-            return ResponseEntity.status(200).body(teamToAdd);
-
-        } catch (InvalidParameterException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
-    }
-
     @GetMapping(path = "/team")
     public ResponseEntity<Object> getAllTeams() {
         logger.info("TeamController.getAllTeams() invoked");
@@ -43,6 +30,19 @@ public class TeamController {
             return ResponseEntity.status(200).body(allTeams);
 
         } catch (InvalidParameterException | TeamDoesNotExist e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PostMapping(path = "/team")
+    public ResponseEntity<Object> addTeam(@RequestBody Map<String, String> json) {
+        logger.info("TeamController.addTeam() invoked");
+
+        try {
+            Team teamToAdd = teamService.addTeam(json.get("teamName"), json.get("teamTurn"));
+            return ResponseEntity.status(200).body(teamToAdd);
+
+        } catch (InvalidParameterException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

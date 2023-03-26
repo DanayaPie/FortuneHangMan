@@ -1,4 +1,4 @@
-DROP TABLE If EXISTS game;
+DROP TABLE If EXISTS game CASCADE;
 
 ROLLBACK;
 
@@ -6,22 +6,24 @@ COMMIT;
 
 CREATE TABLE game (
 	game_id SERIAL PRIMARY KEY,
-	round_id INTEGER NOT NULL,
-	word_id INTEGER NOT NULL,
+	game_name VARCHAR(100) NOT NULL,
+	round_id INTEGER,
+	word_id INTEGER,
 	game_status VARCHAR(300) NOT NULL,
 	letter_guessed VARCHAR(26),
-	current_team_turn INTEGER NOT NULL,
-	current_round INTEGER NOT NULL,
-	CONSTRAINT round_fk FOREIGN KEY (round_id) REFERENCES round(round_id),
-	CONSTRAINT word_fk FOREIGN KEY (word_id) REFERENCES word(word_id)
+	current_team_turn INTEGER,
+	current_round INTEGER,
+	total_team INTEGER NOT NULL,
+--	CONSTRAINT roundid_fk FOREIGN KEY (round_id) REFERENCES round(round_id),
+	CONSTRAINT wordid_fk FOREIGN KEY (word_id) REFERENCES word(word_id)
 );
 
 
 -- ===== INSERT
 INSERT INTO game (
-	round_id, word_id, game_status, current_team_turn, current_round 
+	game_name, round_id, word_id, game_status, current_team_turn, current_round, total_team
 ) VALUES 
-	(1, 3, 'started', 1, 1)
+	('for fun', null, 3, 'started', 1, 1, 4);
 
 	
 -- ===== QUERYING

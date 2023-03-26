@@ -20,21 +20,6 @@ public class TeamDao {
     private EntityManager entityManager;
 
     @Transactional
-    public Team addTeam(String teamName, int teamTurn, int teamScore) {
-        logger.info("TeamDao.addTeam() invoked");
-
-        Team teamToAdd = new Team();
-
-        teamToAdd.setTeamName(teamName);
-        teamToAdd.setTeamTurn(teamTurn);
-        teamToAdd.setTotalScore(teamScore);
-
-        this.entityManager.persist(teamToAdd);
-
-        return teamToAdd;
-    }
-
-    @Transactional
     public List<Team> getAllTeams() {
         logger.info("TeamDao.getAllTeams() invoked");
 
@@ -47,6 +32,20 @@ public class TeamDao {
 
             return null;
         }
+    }
+
+    @Transactional
+    public Team addTeam(String teamName, int teamTurn, int teamScore) {
+        logger.info("TeamDao.addTeam() invoked");
+
+        Team teamToAdd = new Team();
+        teamToAdd.setTeamName(teamName);
+        teamToAdd.setTeamTurn(teamTurn);
+        teamToAdd.setTotalScore(teamScore);
+
+        this.entityManager.persist(teamToAdd);
+
+        return teamToAdd;
     }
 
     @Transactional

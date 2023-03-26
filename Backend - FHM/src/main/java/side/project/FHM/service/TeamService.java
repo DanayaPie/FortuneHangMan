@@ -40,14 +40,15 @@ public class TeamService {
     public Team addTeam(String teamName, String teamTurn) throws InvalidParameterException {
         logger.info("TeamService.addTeam() invoked");
 
-        ValidateTeam.validateTeamNameBlank(teamName);
-
         teamName = teamName.trim();
+
         int teamTurnNumber;
         int teamScore = 0;
 
+        ValidateTeam.validateTeamNameBlank(teamName);
+
         try {
-            teamTurnNumber = Integer.parseInt(teamTurn);
+            teamTurnNumber = Integer.parseInt(teamTurn.trim());
         } catch (NumberFormatException e) {
             throw new InvalidParameterException("Team turn must be a whole number");
         }

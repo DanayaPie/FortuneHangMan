@@ -1,7 +1,4 @@
-DROP TABLE IF EXISTS word,
-team,
-round,
-game;
+DROP TABLE If EXISTS word, team, round, game;
 
 DELETE FROM word;
 

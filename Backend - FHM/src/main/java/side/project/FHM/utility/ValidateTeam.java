@@ -12,13 +12,13 @@ public class ValidateTeam {
     private static Logger logger = LoggerFactory.getLogger(ValidateTeam.class);
 
     @Autowired
-    TeamService teamService;
+    private TeamService teamService;
 
     public static void validateTeamNameBlank(String teamName) throws InvalidParameterException {
         logger.info("ValidateTeam.validateTeamNameBlank() invoked");
 
         if (StringUtils.isBlank(teamName)) {
-            throw new InvalidParameterException("Team name cannot be blank");
+            throw new InvalidParameterException("Team name cannot be blank.");
         }
     }
 }

@@ -18,20 +18,11 @@ import java.util.Set;
 @RestController
 public class WordController implements InitializingBean {
 
-    @Autowired
-    private WordService wordService;
-
     private Logger logger = LoggerFactory.getLogger(WordController.class);
     private Set<Word> wordsInDb = new HashSet<>();
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        try {
-            wordsInDb = wordService.getAllWords();
-        } catch (WordDoesNotExist | InvalidParameterException e) {
-            e.getMessage();
-        }
-    }
+    @Autowired
+    private WordService wordService;
 
     @GetMapping(path = "/word")
     public ResponseEntity<Object> getAllWords() {
@@ -82,6 +73,15 @@ public class WordController implements InitializingBean {
 
         } catch (InvalidParameterException | WordDoesNotExist e) {
             return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            wordsInDb = wordService.getAllWords();
+        } catch (WordDoesNotExist | InvalidParameterException e) {
+            e.getMessage();
         }
     }
 }

@@ -8,19 +8,26 @@ import java.util.Objects;
 @Embeddable
 public class RoundId implements Serializable {
 
-    @Column(name = "round_id", insertable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "round_generator")
+    @SequenceGenerator(name = "round_generator", sequenceName = "round_seq")
+    @Column(name = "round_id",updatable = false, nullable = false)
     private int roundId;
 
     @OneToOne
     @JoinColumn(name = "team_id", nullable = false)
-    private Team teamId;
+    private Team team;
+
+    @OneToOne
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     public RoundId() {
     }
 
-    public RoundId(int roundId, Team teamId) {
+    public RoundId(int roundId, Team team, Game game) {
         this.roundId = roundId;
-        this.teamId = teamId;
+        this.team = team;
+        this.game = game;
     }
 
     public int getRoundId() {
@@ -31,32 +38,41 @@ public class RoundId implements Serializable {
         this.roundId = roundId;
     }
 
-    public Team getTeamId() {
-        return teamId;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setTeamId(Team teamId) {
-        this.teamId = teamId;
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof RoundId)) return false;
         RoundId roundId1 = (RoundId) o;
-        return roundId == roundId1.roundId && Objects.equals(teamId, roundId1.teamId);
+        return roundId == roundId1.roundId && Objects.equals(team, roundId1.team) && Objects.equals(game, roundId1.game);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roundId, teamId);
+        return Objects.hash(roundId, team, game);
     }
 
     @Override
     public String toString() {
         return "RoundId{" +
                 "roundId=" + roundId +
-                ", teamId=" + teamId +
+                ", team=" + team +
+                ", game=" + game +
                 '}';
     }
 }

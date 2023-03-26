@@ -11,7 +11,6 @@ import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Word;
 import side.project.FHM.utility.ValidateWord;
 
-import javax.xml.crypto.Data;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -45,13 +44,13 @@ public class WordService {
         String categoryCaps = category.trim().toUpperCase();
         String wordCaps = word.trim().toUpperCase();
 
+        ValidateWord.validateCategoryAndWordBlank(categoryCaps, wordCaps); // validate blank inputs
+        ValidateWord.validateCategoryAndWordChar(categoryCaps, wordCaps); // validate characters in inputs
+
         // create wordToAdd instance to be compares to wordInDb
         Word wordToAdd = new Word();
         wordToAdd.setCategory(categoryCaps);
         wordToAdd.setWord(wordCaps);
-
-        ValidateWord.validateWordBlank(categoryCaps, wordCaps); // validate blank inputs
-        ValidateWord.validateWordChar(categoryCaps, wordCaps); // validate characters in inputs
 
         logger.debug("wordInDb {}" + wordInDb);
         logger.debug("wordToAdd {} " + wordToAdd);

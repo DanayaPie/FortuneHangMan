@@ -29,4 +29,5 @@ WHERE team_name;
 
 SELECT *
 FROM team;
+
 where team_id = 1;

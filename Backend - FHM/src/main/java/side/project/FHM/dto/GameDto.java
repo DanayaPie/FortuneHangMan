@@ -1,52 +1,25 @@
-package side.project.FHM.model;
+package side.project.FHM.dto;
 
-import jakarta.persistence.*;
+import side.project.FHM.model.Word;
 
-import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "game")
-public class Game {
+public class GameDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "game_id", insertable = false)
     private int gameId;
-
-    @Column(name = "game_name", nullable = false)
     private String gameName;
-
-//    @OneToMany
-//    @JoinColumn(name = "round_id", nullable = true)
-//    private List<Round> round;
-
-    @Column(name = "round_id", nullable = true)
     private int roundId;
-
-    @OneToOne
-    @JoinColumn(name = "word_id", nullable = true)
     private Word word;
-
-    @Column(name = "game_status", nullable = false)
     private String gameStatus;
-
-    @Column(name = "letter_guessed")
     private String letterGuessed;
-
-    @Column(name = "current_team_turn")
     private int currentTeamTurn;
-
-    @Column(name = "current_round")
     private int currentRound;
-
-    @Column(name = "total_team")
     private int totalTeam;
 
-    public Game() {
+    public GameDto() {
     }
 
-    public Game(int gameId, String gameName, int roundId, Word word, String gameStatus, String letterGuessed, int currentTeamTurn, int currentRound, int totalTeam) {
+    public GameDto(int gameId, String gameName, int roundId, Word word, String gameStatus, String letterGuessed, int currentTeamTurn, int currentRound, int totalTeam) {
         this.gameId = gameId;
         this.gameName = gameName;
         this.roundId = roundId;
@@ -74,11 +47,11 @@ public class Game {
         this.gameName = gameName;
     }
 
-    public Integer getRoundId() {
+    public int getRoundId() {
         return roundId;
     }
 
-    public void setRoundId(Integer roundId) {
+    public void setRoundId(int roundId) {
         this.roundId = roundId;
     }
 
@@ -133,9 +106,9 @@ public class Game {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Game)) return false;
-        Game game = (Game) o;
-        return gameId == game.gameId;
+        if (!(o instanceof GameDto)) return false;
+        GameDto gameDto = (GameDto) o;
+        return gameId == gameDto.gameId;
     }
 
     @Override
@@ -145,7 +118,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "Game{" +
+        return "GameDto{" +
                 "gameId=" + gameId +
                 ", gameName='" + gameName + '\'' +
                 ", roundId=" + roundId +

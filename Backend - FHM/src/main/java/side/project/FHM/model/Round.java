@@ -7,11 +7,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "round")
-public class Round{
+public class Round {
 
     @EmbeddedId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "round_id", insertable = false)
     private RoundId roundId;
 
     @Column(name = "round_score", nullable = false)
@@ -26,7 +25,7 @@ public class Round{
     public Round() {
     }
 
-    public Round(RoundId roundId, int roundScore, int spinScore, boolean spinToken) {
+    public Round(RoundId roundId, int teamId, int gameId, int roundScore, int spinScore, boolean spinToken) {
         this.roundId = roundId;
         this.roundScore = roundScore;
         this.spinScore = spinScore;
@@ -68,20 +67,23 @@ public class Round{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Round)) return false;
         Round round = (Round) o;
-        return roundScore == round.roundScore && spinScore == round.spinScore && spinToken == round.spinToken && Objects.equals(roundId, round.roundId);
+        return roundId.getTeam() == round.roundId.getTeam() && roundId.getGame()
+                == round.roundId.getGame() && Objects.equals(roundId, round.roundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roundId, roundScore, spinScore, spinToken);
+        return Objects.hash(roundId.getRoundId(), roundId.getTeam(), roundId.getGame());
     }
 
     @Override
     public String toString() {
         return "Round{" +
                 "roundId=" + roundId +
+                ", teamId=" + roundId.getTeam() +
+                ", gameId=" + roundId.getTeam() +
                 ", roundScore=" + roundScore +
                 ", spinScore=" + spinScore +
                 ", spinToken=" + spinToken +

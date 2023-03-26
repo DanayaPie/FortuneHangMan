@@ -18,9 +18,9 @@ public class ValidateWord {
     private static Logger logger = LoggerFactory.getLogger(ValidateWord.class);
 
     @Autowired
-    WordService wordService;
+    private WordService wordService;
 
-    public static void validateWordBlank(String category, String word) throws InvalidParameterException {
+    public static void validateCategoryAndWordBlank(String category, String word) throws InvalidParameterException {
         logger.info("ValidateWord.validateWordBlank() invoked");
 
         boolean wordBlankErrorBoolean = false;
@@ -47,7 +47,7 @@ public class ValidateWord {
         }
     }
 
-    public static void validateWordChar(String category, String word) throws InvalidParameterException {
+    public static void validateCategoryAndWordChar(String category, String word) throws InvalidParameterException {
         logger.info("ValidateWord.validateWordChar() invoked");
 
         boolean wordCharErrorBoolean = false;
