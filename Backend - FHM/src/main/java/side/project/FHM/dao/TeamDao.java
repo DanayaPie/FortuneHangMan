@@ -62,4 +62,12 @@ public class TeamDao {
             return null;
         }
     }
+
+    @Transactional
+    public Team updateTeamByTeamId(Team teamToUpdate) {
+        logger.info("TeamDao.updateTeamByTeamId() invoked");
+
+        this.entityManager.merge(teamToUpdate);
+        return teamToUpdate;
+    }
 }

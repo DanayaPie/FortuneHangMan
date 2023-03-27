@@ -72,4 +72,22 @@ public class TeamService {
 
         }
     }
+
+    public Team updateTeamByTeamId(int teamId, String totalScore) throws InvalidParameterException, TeamDoesNotExist {
+        logger.info("TeamService.updateTeamByTeamId() invoked");
+
+        int totalScoreNumber;
+        Team teamToUpdate = getTeamByTeamId(teamId);
+
+        try {
+            totalScoreNumber = Integer.parseInt(totalScore);
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException("Total score must be a whole number.");
+        }
+
+        teamToUpdate.setTotalScore(totalScoreNumber);
+
+        Team updatedTeam = teamDao.updateTeamByTeamId(teamToUpdate);
+        return updatedTeam;
+    }
 }

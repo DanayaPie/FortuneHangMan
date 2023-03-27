@@ -52,8 +52,21 @@ public class TeamController {
         logger.info("TeamController.getTeamByTeamId() invoked");
 
         try {
-            Team teamToGet = this.teamService.getTeamByTeamId(teamId);
+            Team teamToGet = teamService.getTeamByTeamId(teamId);
             return ResponseEntity.status(200).body(teamToGet);
+
+        } catch (InvalidParameterException | TeamDoesNotExist e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @PutMapping(path = "/team/{teamId}")
+    public ResponseEntity<Object> updateTeamByTeamId(@PathVariable int teamId, @RequestBody Map<String, String> json) {
+        logger.info("TeamController.updateTeamByTeamId() invoked");
+
+        try {
+            Team teamToUpdate = teamService.updateTeamByTeamId(teamId, json.get("totalScore"));
+            return ResponseEntity.status(200).body(teamToUpdate);
 
         } catch (InvalidParameterException | TeamDoesNotExist e) {
             return ResponseEntity.status(400).body(e.getMessage());
