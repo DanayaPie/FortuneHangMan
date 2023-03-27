@@ -13,6 +13,7 @@ import side.project.FHM.model.Game;
 import side.project.FHM.model.Round;
 import side.project.FHM.model.RoundId;
 import side.project.FHM.model.Team;
+import side.project.FHM.utility.ValidateRound;
 
 import java.util.Set;
 
@@ -100,42 +101,77 @@ public class RoundService {
         }
     }
 
-//    public Round updateRoundByRoundIdTeamId(int roundId, int teamId, String roundScore, String spinScore, String s) throws InvalidParameterException {
-//        logger.info("RoundService.updateRoundBYRoundId() invoked");
-//
-//        Round roundToUpdate = new Round();
-//        roundToUpdate = getRoundByRoundId(roundId);
-//
-//        /*
-//            parse int inputs and set to roundToUpdate instance
-//         */
-//        Boolean roundInputsIntErrorBoolean = false;
-//        StringBuilder roundInputsErrorString = new StringBuilder();
-//
-//        try {
-//
-//            // team ID
-//            if (teamId != null) {
-//                logger.info("Updating team ID");
-//
-//                if (teamId.matches("^[0-9]*$")) {
-//                     // set team id
-//                    int teamIdNumber = Integer.parseInt(teamId.trim());
-//                    Team teamToGet = teamService.getTeamByTeamId(teamIdNumber);
-//                }
-//            }
-//
-//            // append int error message
-//            if (roundInputsIntErrorBoolean) {
-//                roundInputsErrorString.append(" must be whole number.");
-//                throw new NumberFormatException(roundInputsErrorString.toString());
-//            }
-//
-//        } catch (NumberFormatException e) {
-//            throw new InvalidParameterException(roundInputsErrorString.toString());
-//        }
-//
-//        Round roundUpdated = roundDao.updateRoundByRoundId(roundToUpdate);
-//        return roundUpdated;
-//    }
+    public Round updateRoundByRoundIdTeamId(int roundId, int teamId, String roundScore, String spinScore, String spinToken) throws InvalidParameterException {
+        logger.info("RoundService.updateRoundByRoundIdTeamId() invoked");
+
+        Round roundToUpdate = new Round();
+        roundToUpdate = getRoundByRoundIdTeamId(roundId, teamId);
+
+        /*
+            parse int inputs and set to roundToUpdate instance
+         */
+        Boolean roundInputsIntErrorBoolean = false;
+        StringBuilder roundInputsErrorString = new StringBuilder();
+
+        try {
+
+            // round score
+            if (roundScore != null) {
+                logger.info("Updating round score");
+
+                if (roundScore.matches("^[0-9]*$")) {
+                    // set round score
+                    int roundScoreNumber = Integer.parseInt(roundScore);
+                    roundToUpdate.setRoundScore(roundScoreNumber);
+                } else {
+                    logger.info("Round score is not an int");
+
+                    roundInputsErrorString.append("Round score");
+                    roundInputsIntErrorBoolean = true;
+                }
+            }
+
+            // spin score
+            if (spinScore != null) {
+                logger.info("Updating spin score");
+
+                if (spinScore.matches("^[0-9]*$")) {
+                    // set spin score
+                    int spinScoreNumber = Integer.parseInt(spinScore);
+                    roundToUpdate.setSpinScore(spinScoreNumber);
+                } else {
+                    logger.info("Spin score is not an int");
+
+                    if (roundInputsIntErrorBoolean) {
+                        roundInputsErrorString.append(" , spin score");
+                    } else {
+                        roundInputsErrorString.append("Spin score");
+                    }
+                    roundInputsIntErrorBoolean = true;
+                }
+            }
+
+            // append int error message
+            if (roundInputsIntErrorBoolean) {
+                roundInputsErrorString.append(" must be whole number.");
+                throw new NumberFormatException(roundInputsErrorString.toString());
+            }
+
+        } catch (NumberFormatException e) {
+            throw new InvalidParameterException(roundInputsErrorString.toString());
+        }
+
+        logger.info("spinToken {}", spinToken);
+        // spin token
+        if (spinToken != null) {
+            logger.info("Updating spin token");
+
+            ValidateRound.validateSpinToken(spinToken.trim());
+            boolean spinTokenBoolean = Boolean.parseBoolean(spinToken);
+            roundToUpdate.setSpinToken(spinTokenBoolean);
+        }
+
+        Round roundUpdated = roundDao.updateRoundByRoundIdTeamId(roundToUpdate);
+        return roundUpdated;
+    }
 }

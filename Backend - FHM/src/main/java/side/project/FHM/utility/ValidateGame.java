@@ -20,7 +20,7 @@ public class ValidateGame {
     private GameService gameService;
 
     public static void validateGameStatus(String gameStatusInput) throws InvalidParameterException {
-        logger.info("GameService.validateGameStatus() invoked");
+        logger.info("ValidateGame.validateGameStatus() invoked");
 
         if (!validGameStatus.contains(gameStatusInput)) {
             throw new InvalidParameterException("Status must be either IN PROGRESS or ENDED.");

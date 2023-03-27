@@ -60,7 +60,7 @@ public class RoundDao {
 
     @Transactional
     public Round getRoundByRoundIdTeamId(int roundId, int teamId) {
-        logger.info("RoundDao.updateRoundByRoundId() invoked");
+        logger.info("RoundDao.getRoundByRoundIdTeamId() invoked");
 
         try {
             Round roundToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
@@ -73,13 +73,12 @@ public class RoundDao {
             return null;
         }
     }
-//    @Transactional
-//    public Round updateRoundByRoundId(Round roundToUpdate) {
-//        logger.info("RoundDao.updateRoundByRoundId() invoked");
-//
-//        this.entityManager.merge(roundToUpdate);
-//        return roundToUpdate;
-//    }
 
+    @Transactional
+    public Round updateRoundByRoundIdTeamId(Round roundToUpdate) {
+        logger.info("RoundDao.updateRoundByRoundIdTeamId() invoked");
 
+        this.entityManager.merge(roundToUpdate);
+        return roundToUpdate;
+    }
 }

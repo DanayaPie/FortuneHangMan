@@ -59,28 +59,6 @@ public class GameDao {
     }
 
     @Transactional
-    public Game updateGameByGameId(int gameId, int roundId, Word wordToGet, int currentTeamTurn, int currentRound) {
-        logger.info("GameDao.updateGameByGameId() invoked");
-
-        try {
-            Game updatedGame = entityManager.createQuery("UPDATE Game g SET g.roundId = :roundId"
-                            + ", g.word = :wordToGet"
-                            + ", g.currentTeamTurn = :currentTeamTurn"
-                            + ", g.currentRound = :currentRound WHERE g.gameId = :gameId", Game.class)
-                    .setParameter("roundId", roundId)
-                    .setParameter("wordToGet", wordToGet)
-                    .setParameter("currentTeamTurn", currentTeamTurn)
-                    .setParameter("currentRound", currentRound)
-                    .setParameter("gameId", gameId)
-                    .getSingleResult();
-            return updatedGame;
-
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
-    @Transactional
     public Game updateGameByGameId(Game gameToUpdate) {
         logger.info("GameDao.updateGameByGameId() invoked");
 

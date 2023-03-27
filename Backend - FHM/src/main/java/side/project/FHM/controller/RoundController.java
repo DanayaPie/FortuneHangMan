@@ -74,20 +74,21 @@ public class RoundController {
         }
     }
 
-//    @PutMapping(path = "/round/{roundId}/{teamId}")
-//    public ResponseEntity<Object> updateRoundByRoundIdTeamId(@PathVariable(value = "roundId") int roundId
-//            , @PathVariable(value = "teamId") int teamId
-//            , @RequestParam Map<String, String> json) {
-//        logger.info("RoundController.updateRoundByRoundId() invoked");
-//
-//        try {
-//            Round roundToUpdate = roundService.updateRoundByRoundIdTeamId(roundId, teamId
-//                    , json.get("roundScore")
-//                    , json.get("spinScore")
-//                    , json.get("spinToken)"));
-//            return ResponseEntity.status(200).body(roundToUpdate);
-//        } catch (InvalidParameterException e) {
-//            return ResponseEntity.status(400).body(e.getMessage());
-//        }
-//    }
+    @PutMapping(path = "/round/{roundId}/{teamId}")
+    public ResponseEntity<Object> updateRoundByRoundIdTeamId(@PathVariable(value = "roundId") int roundId
+            , @PathVariable(value = "teamId") int teamId
+            , @RequestParam Map<String, String> json) {
+        logger.info("RoundController.updateRoundByRoundIdTeamId() invoked");
+
+        try {
+            Round roundToUpdate = roundService.updateRoundByRoundIdTeamId(roundId, teamId
+                    , json.get("roundScore")
+                    , json.get("spinScore")
+                    , json.get("spinToken"));
+
+            return ResponseEntity.status(200).body(roundToUpdate);
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
 }
