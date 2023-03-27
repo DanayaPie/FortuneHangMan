@@ -85,7 +85,6 @@ public class GameDao {
         logger.info("GameDao.updateGameByGameId() invoked");
 
         this.entityManager.merge(gameToUpdate);
-
         return gameToUpdate;
     }
 }

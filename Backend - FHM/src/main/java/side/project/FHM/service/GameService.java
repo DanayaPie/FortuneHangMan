@@ -92,11 +92,6 @@ public class GameService {
         Game gameToUpdate = new Game();
         gameToUpdate = getGameByGameId(gameId);
 
-        // check if game exist
-        if (gameToUpdate == null) {
-            throw new InvalidParameterException("No game by the game ID of " + gameId);
-        }
-
         /*
             parse int inputs and set gameToUpdate instance
          */
@@ -110,7 +105,6 @@ public class GameService {
                 logger.info("Updating round ID");
 
                 if (roundId.matches("^[0-9]*$")) {
-
                     // set round ID
                     int roundIdNumber = Integer.parseInt(roundId.trim());
                     gameToUpdate.setRoundId(roundIdNumber);

@@ -23,7 +23,7 @@ public class RoundDao {
 
     @Transactional
     public Set<Round> getAllRounds() {
-        logger.info("RoundService.getAllRounds() invoked");
+        logger.info("RoundDao.getAllRounds() invoked");
 
         try {
             List<Round> rounds = entityManager.createQuery("FROM Round r", Round.class).getResultList();
@@ -37,7 +37,7 @@ public class RoundDao {
 
     @Transactional
     public Round addRound(Round roundToAdd) {
-        logger.info("RoundService.addRound() invoked");
+        logger.info("RoundDao.addRound() invoked");
 
         this.entityManager.persist(roundToAdd);
         return roundToAdd;
@@ -45,7 +45,7 @@ public class RoundDao {
 
     @Transactional
     public Round getRoundByRoundId(int roundId) {
-        logger.info("RoundService.getRoundByRoundId() invoked");
+        logger.info("RoundDao.getRoundByRoundId() invoked");
 
         try {
             Round roundToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId", Round.class)
@@ -57,4 +57,29 @@ public class RoundDao {
             return null;
         }
     }
+
+    @Transactional
+    public Round getRoundByRoundIdTeamId(int roundId, int teamId) {
+        logger.info("RoundDao.updateRoundByRoundId() invoked");
+
+        try {
+            Round roundToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
+                            + " AND r.roundId.team.teamId = :teamId", Round.class)
+                    .setParameter("roundId", roundId)
+                    .setParameter("teamId", teamId)
+                    .getSingleResult();
+            return roundToGet;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+//    @Transactional
+//    public Round updateRoundByRoundId(Round roundToUpdate) {
+//        logger.info("RoundDao.updateRoundByRoundId() invoked");
+//
+//        this.entityManager.merge(roundToUpdate);
+//        return roundToUpdate;
+//    }
+
+
 }
