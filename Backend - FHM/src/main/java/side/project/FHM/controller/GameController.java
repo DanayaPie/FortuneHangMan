@@ -5,10 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import side.project.FHM.dto.GameDto;
 import side.project.FHM.exception.GamesDoesNotExist;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Game;
 import side.project.FHM.service.GameService;
 
@@ -71,6 +69,8 @@ public class GameController {
             Game gameToUpdate = gameService.updateGameByGameId(gameId
                     , json.get("roundId")
                     , json.get("wordId")
+                    , json.get("gameStatus")
+                    , json.get("letterGuessed")
                     , json.get("currentTeamTurn")
                     , json.get("currentRound"));
             return ResponseEntity.status(200).body(gameToUpdate);

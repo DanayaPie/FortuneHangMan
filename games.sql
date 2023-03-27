@@ -23,7 +23,7 @@ CREATE TABLE game (
 INSERT INTO game (
 	game_name, round_id, word_id, game_status, current_team_turn, current_round, total_team
 ) VALUES 
-	('for fun', null, 3, 'started', 1, 1, 4);
+	('for fun', 0, 3, 'started', 1, 1, 4);
 
 	
 -- ===== QUERYING

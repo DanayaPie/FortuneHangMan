@@ -11,8 +11,10 @@ import side.project.FHM.exception.InvalidParameterException;
 import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Game;
 import side.project.FHM.model.Word;
+import side.project.FHM.utility.ValidateGame;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class GameService {
@@ -47,7 +49,7 @@ public class GameService {
         gameName = gameName.trim();
 
         int totalTeamNumber;
-        String gameStatus = "started";
+        String gameStatus = "STARTED";
 
         try {
             totalTeamNumber = Integer.parseInt(totalTeam.trim());
@@ -84,7 +86,7 @@ public class GameService {
         }
     }
 
-    public Game updateGameByGameId(int gameId, String roundId, String wordId, String currentTeamTurn, String currentRound) throws InvalidParameterException {
+    public Game updateGameByGameId(int gameId, String roundId, String wordId, String gameStatus, String letterGuessed, String currentTeamTurn, String currentRound) throws InvalidParameterException {
         logger.info("GameService.updateGameByGameId() invoked");
 
         Game gameToUpdate = new Game();
@@ -94,34 +96,6 @@ public class GameService {
         if (gameToUpdate == null) {
             throw new InvalidParameterException("No game by the game ID of " + gameId);
         }
-
-//        /*
-//            set letter guessed of gameToUpdate instance
-//         */
-//        if (letterGuessed != null) {
-//            logger.info("Update letter guessed");
-//
-//            String letterGuessedStr;
-//            StringBuilder letterGuessedStrB = new StringBuilder();
-//            String letterAlreadyGuessed = gameToUpdate.getLetterGuessed();
-//
-//            if (letterAlreadyGuessed != null) {
-//                letterGuessedStrB.append(letterAlreadyGuessed);
-//            }
-//
-//            letterGuessedStrB.append(letterGuessed);
-//            letterGuessedStr = letterGuessedStrB.toString();
-//            gameToUpdate.setLetterGuessed(letterGuessedStr);
-//        }
-
-//        /*
-//            set game status of gameToUpdate instance
-//         */
-//        if (gameStatus != null) {
-//            logger.info("Update game status");
-//
-//            gameToUpdate.setGameStatus(gameStatus);
-//        }
 
         /*
             parse int inputs and set gameToUpdate instance
@@ -222,6 +196,38 @@ public class GameService {
 
         } catch (NumberFormatException | WordDoesNotExist e) {
             throw new InvalidParameterException(gameInputsIntegerErrorString.toString());
+        }
+
+        /*
+            validate and set game status
+         */
+        if (gameStatus != null) {
+            logger.info("Updating game status");
+
+            String gameStatusInput = gameStatus.toUpperCase(Locale.ROOT);
+            ValidateGame.validateGameStatus(gameStatusInput);
+
+            // set game status
+            gameToUpdate.setGameStatus(gameStatusInput);
+        }
+
+        /*
+            set letter guessed of gameToUpdate instance
+         */
+        if (letterGuessed != null) {
+            logger.info("Updating letter guessed");
+
+            String letterGuessedStr;
+            StringBuilder letterGuessedStrB = new StringBuilder();
+            String letterAlreadyGuessed = gameToUpdate.getLetterGuessed();
+
+            if (letterAlreadyGuessed != null) {
+                letterGuessedStrB.append(letterAlreadyGuessed);
+            }
+
+            letterGuessedStrB.append(letterGuessed);
+            letterGuessedStr = letterGuessedStrB.toString();
+            gameToUpdate.setLetterGuessed(letterGuessedStr);
         }
 
         Game updatedGame = gameDao.updateGameByGameId(gameToUpdate);

@@ -18,10 +18,10 @@ import java.util.Set;
 @Service
 public class WordService {
 
+    private Logger logger = LoggerFactory.getLogger(WordService.class);
+
     @Autowired
     private WordDao wordDao;
-
-    private Logger logger = LoggerFactory.getLogger(WordService.class);
 
     public Set<Word> getAllWords() throws WordDoesNotExist, InvalidParameterException {
         logger.info("WordService.getAllWords() invoked");
