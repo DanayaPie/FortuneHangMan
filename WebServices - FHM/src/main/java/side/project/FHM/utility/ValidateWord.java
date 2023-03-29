@@ -5,13 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.WordDoesNotExist;
-import side.project.FHM.model.Word;
 import side.project.FHM.service.WordService;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class ValidateWord {
 

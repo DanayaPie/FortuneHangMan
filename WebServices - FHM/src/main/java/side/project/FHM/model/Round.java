@@ -2,7 +2,6 @@ package side.project.FHM.model;
 
 import jakarta.persistence.*;
 
-import java.io.Serializable;
 import java.util.Objects;
 
 @Entity

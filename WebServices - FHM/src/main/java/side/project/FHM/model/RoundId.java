@@ -10,7 +10,7 @@ public class RoundId implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "round_generator")
     @SequenceGenerator(name = "round_generator", sequenceName = "round_seq")
-    @Column(name = "round_id",updatable = false, nullable = false)
+    @Column(name = "round_id", updatable = false, nullable = false)
     private int roundId;
 
     @OneToOne
