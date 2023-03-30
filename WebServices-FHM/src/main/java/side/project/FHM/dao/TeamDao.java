@@ -35,17 +35,10 @@ public class TeamDao {
     }
 
     @Transactional
-    public Team addTeam(String teamName, int teamTurn, int gameId, int teamScore) {
+    public Team addTeam(Team teamToAdd) {
         logger.info("TeamDao.addTeam() invoked");
 
-        Team teamToAdd = new Team();
-        teamToAdd.setTeamName(teamName);
-        teamToAdd.setTeamTurn(teamTurn);
-        teamToAdd.setGameId(gameId);
-        teamToAdd.setTotalScore(teamScore);
-
         this.entityManager.persist(teamToAdd);
-
         return teamToAdd;
     }
 

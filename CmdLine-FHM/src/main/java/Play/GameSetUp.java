@@ -67,6 +67,7 @@ public class GameSetUp {
         int totalTeam = game.getTotalTeam();
         String teamName;
         int teamTurn;
+        int gameId = game.getGameId();
 
         for (int i = 0; i < totalTeam; i++) {
 
