@@ -9,16 +9,17 @@ CREATE TABLE team (
 	team_id SERIAL PRIMARY KEY,
 	team_name VARCHAR(255) NOT NULL,
 	team_turn INTEGER NOT NULL,
+	game_id INTEGER,
 	total_score INTEGER NOT NULL
 );
 
 
 -- ===== INSERT
 INSERT INTO team
-	(team_name, team_turn, total_score)
+	(team_name, team_turn, game_id, total_score)
 VALUES
-	('Dragon', 1, 0),
-	('Monkey', 2, 0)
+	('Dragon', 1, 0, 0),
+	('Monkey', 2, 0, 0)
 
 
 -- ===== QUERYING

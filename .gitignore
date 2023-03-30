@@ -1,3 +1,4 @@
-
-.idea/vcs.xml
+.idea/
 .idea/workspace.xml
+HttpClient-FHM/.idea/compiler.xml
+WebService-FHM/out/

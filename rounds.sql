@@ -36,7 +36,7 @@ VALUES
 
 
 INSERT INTO round (
-	round_id,team_id, game_id, round_score, spin_score, spin_token) 
+	round_id, team_id, game_id, round_score, spin_score, spin_token) 
 VALUES 
 	((select LAST_VALUE from round_seq), 1, 1, 0, 1, false);
 
