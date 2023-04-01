@@ -1,6 +1,9 @@
 package side.project.FHM.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -8,42 +11,39 @@ import java.util.Objects;
 @Embeddable
 public class RoundId implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "round_generator")
-    @SequenceGenerator(name = "round_generator", sequenceName = "round_seq")
-    @Column(name = "round_id", updatable = false, nullable = false)
-    private int roundId;
+    @Column(name = "round_id")
+    private long roundId;
 
-    @OneToOne
-    @JoinColumn(name = "team_id", nullable = false)
-    private Team team;
+    @Column(name = "team_id", insertable = false, updatable = false)
+    private int teamId;
 
-    @OneToOne
-    @JoinColumn(name = "game_id", nullable = true)
+    @ManyToOne
+    @JoinColumn(name = "game_id", insertable = false, updatable = false)
     private Game game;
 
     public RoundId() {
     }
 
-    public RoundId(int roundId, Team team, Game game) {
+    public RoundId(long roundId, int teamId, Game game) {
         this.roundId = roundId;
-        this.team = team;
+        this.teamId = teamId;
         this.game = game;
     }
 
-    public int getRoundId() {
+    public long getRoundId() {
         return roundId;
     }
 
-    public void setRoundId(int roundId) {
+    public void setRoundId(long roundId) {
         this.roundId = roundId;
     }
 
-    public Team getTeam() {
-        return team;
+    public int getTeamId() {
+        return teamId;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     public Game getGame() {
@@ -54,25 +54,24 @@ public class RoundId implements Serializable {
         this.game = game;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof RoundId)) return false;
         RoundId roundId1 = (RoundId) o;
-        return roundId == roundId1.roundId && Objects.equals(team, roundId1.team) && Objects.equals(game, roundId1.game);
+        return roundId == roundId1.roundId && teamId == roundId1.teamId && Objects.equals(game, roundId1.game);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roundId, team, game);
+        return Objects.hash(roundId, teamId, game);
     }
 
     @Override
     public String toString() {
         return "RoundId{" +
                 "roundId=" + roundId +
-                ", team=" + team +
+                ", teamId=" + teamId +
                 ", game=" + game +
                 '}';
     }

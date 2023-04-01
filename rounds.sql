@@ -11,12 +11,15 @@ COMMIT;
 --	word VARCHAR(300) NOT NULL
 --);
 
-CREATE SEQUENCE fhm.round_seq
+CREATE SEQUENCE round_seq
 	AS int
 	START WITH 1
 	INCREMENT BY 1
 ;
 
+drop sequence round_seq;
+
+drop sequence round_sequence;
 CREATE TABLE round (
 	round_id INTEGER NOT NULL,
 	team_id INTEGER NOT NULL,
@@ -32,7 +35,7 @@ CREATE TABLE round (
 INSERT INTO round (
 	round_id, team_id, game_id, round_score, spin_score, spin_token) 
 VALUES 
-	(nextval('round_seq'), 1, 1, 0, 0, false);
+	(nextval('round_sequence'), 1, 1, 0, 0, false);
 
 
 INSERT INTO round (
@@ -54,3 +57,10 @@ WHERE word = "";
 
 SELECT *
 FROM round;
+
+select nextval('round_seq') as roundID;
+
+SELECT sequence_schema, sequence_name 
+FROM information_schema.sequences 
+ORDER BY sequence_name;
+

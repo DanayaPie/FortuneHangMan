@@ -1,5 +1,7 @@
 package side.project.FHM.controller;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import side.project.FHM.exception.TeamDoesNotExist;
 import side.project.FHM.model.Round;
 import side.project.FHM.service.RoundService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,12 +40,21 @@ public class RoundController {
     }
 
     @PostMapping(path = "/round")
-    public ResponseEntity<Object> addRound(@RequestBody Map<String, Integer> json) {
-        logger.info("RoundController.getAllRounds() invoked");
+    public ResponseEntity<Object> addRound(@RequestBody Map<String, Object> json) {
+        logger.info("RoundController.addRound() invoked");
+        logger.debug("Json Body  [{}]", json);
+        JSONObject jsonObj = new JSONObject(json);
 
         try {
-            Round roundToAdd = roundService.addRound(json.get("teamId"), json.get("gameId"));
-            return ResponseEntity.status(200).body(roundToAdd);
+            JSONArray teamJsonArray = jsonObj.getJSONArray("teamIds");
+            logger.debug("teamJsonArray  [{}]", teamJsonArray);
+            List<Integer> teamIds = new ArrayList<>();
+            for (int i = 0; i < teamJsonArray.length(); i++) {
+                teamIds.add(teamJsonArray.getInt(i));
+            }
+
+            List<Round> roundsToAdd = roundService.addRound(teamIds, jsonObj.getInt("gameId"));
+            return ResponseEntity.status(200).body(roundsToAdd);
 
         } catch (InvalidParameterException | TeamDoesNotExist e) {
             return ResponseEntity.status(400).body(e.getMessage());
@@ -49,20 +62,20 @@ public class RoundController {
     }
 
     @GetMapping(path = "/round/{roundId}")
-    public ResponseEntity<Object> getRoundByRoundId(@PathVariable int roundId) {
-        logger.info("RoundController.getRoundByRoundId() invoked");
+    public ResponseEntity<Object> getRoundsByRoundId(@PathVariable long roundId) {
+        logger.info("RoundController.getRoundsByRoundId() invoked");
 
         try {
-            Round roundToGet = roundService.getRoundByRoundId(roundId);
-            return ResponseEntity.status(200).body(roundToGet);
+            List<Round> roundsToGet = roundService.getRoundsByRoundId(roundId);
+            return ResponseEntity.status(200).body(roundsToGet);
 
         } catch (InvalidParameterException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
-    @GetMapping(path = "/round/{roundId}/{teamId}")
-    public ResponseEntity<Object> getRoundByRoundIdTeamId(@PathVariable(value = "roundId") int roundId
+    @GetMapping(path = "/roundTeam/{roundId}/{teamId}")
+    public ResponseEntity<Object> getRoundByRoundIdTeamId(@PathVariable(value = "roundId") long roundId
             , @PathVariable(value = "teamId") int teamId) {
         logger.info("RoundController.getRoundByRoundIdTeamId() invoked");
 
@@ -74,8 +87,21 @@ public class RoundController {
         }
     }
 
+    @GetMapping(path = "/roundGame/{roundId}/{gameId}")
+    public ResponseEntity<Object> getRoundsByRoundIdGameId(@PathVariable(value = "roundId") long roundId
+            , @PathVariable(value = "gameId") int gameId) {
+        logger.info("RoundController.getRoundsByRoundIdGameId() invoked");
+
+        try {
+            List<Round> roundsToGet = roundService.getRoundsByRoundIdGameId(roundId, gameId);
+            return ResponseEntity.status(200).body(roundsToGet);
+        } catch (InvalidParameterException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
     @PutMapping(path = "/round/{roundId}/{teamId}")
-    public ResponseEntity<Object> updateRoundByRoundIdTeamId(@PathVariable(value = "roundId") int roundId
+    public ResponseEntity<Object> updateRoundByRoundIdTeamId(@PathVariable(value = "roundId") long roundId
             , @PathVariable(value = "teamId") int teamId
             , @RequestParam Map<String, String> json) {
         logger.info("RoundController.updateRoundByRoundIdTeamId() invoked");

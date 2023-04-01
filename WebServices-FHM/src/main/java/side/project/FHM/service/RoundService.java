@@ -12,9 +12,10 @@ import side.project.FHM.exception.TeamDoesNotExist;
 import side.project.FHM.model.Game;
 import side.project.FHM.model.Round;
 import side.project.FHM.model.RoundId;
-import side.project.FHM.model.Team;
 import side.project.FHM.utility.ValidateRound;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -47,46 +48,56 @@ public class RoundService {
         }
     }
 
-    public Round addRound(Integer teamId, Integer gameId) throws InvalidParameterException, TeamDoesNotExist {
+    public List<Round> addRound(List<Integer> teamIds, Integer gameId) throws InvalidParameterException, TeamDoesNotExist {
         logger.info("RoundService.addRound() invoked");
+        logger.info("sequence [{}]", roundDao.getSequenceId());
 
+        long roundId = roundDao.getSequenceId();
         int roundScore = 0;
         int spinScore = 0;
         boolean spinToken = false;
-        Team team = teamService.getTeamByTeamId(teamId);
+        List<Round> listRoundAdded = new ArrayList<>();
+
         Game game = gameService.getGameByGameId(gameId);
 
-        RoundId roundIdToAdd = new RoundId();
-        roundIdToAdd.setTeam(team);
-        roundIdToAdd.setGame(game);
+        for (Integer teamId : teamIds) {
+            teamService.getTeamByTeamId(teamId); // check if team exist
 
-        Round roundToAdd = new Round();
-        roundToAdd.setRoundId(roundIdToAdd);
-        roundToAdd.setRoundScore(roundScore);
-        roundToAdd.setSpinScore(spinScore);
-        roundToAdd.setSpinToken(spinToken);
+            RoundId roundIdToAdd = new RoundId();
+            roundIdToAdd.setRoundId(roundId);
+            roundIdToAdd.setTeamId(teamId);
+            roundIdToAdd.setGame(game);
 
-        Round roundAdded = roundDao.addRound(roundToAdd);
-        return roundAdded;
+            Round roundToAdd = new Round();
+            roundToAdd.setRoundId(roundIdToAdd);
+            roundToAdd.setRoundScore(roundScore);
+            roundToAdd.setSpinScore(spinScore);
+            roundToAdd.setSpinToken(spinToken);
+
+            Round roundAdded = roundDao.addRound(roundToAdd);
+            listRoundAdded.add(roundAdded);
+
+        }
+        return listRoundAdded;
     }
 
-    public Round getRoundByRoundId(int roundId) throws InvalidParameterException {
-        logger.info("RoundService.getRoundByRoundId() invoked");
+    public List<Round> getRoundsByRoundId(long roundId) throws InvalidParameterException {
+        logger.info("RoundService.getRoundsByRoundId() invoked");
 
-        Round roundToGet = roundDao.getRoundByRoundId(roundId);
+        List<Round> roundsToGet = roundDao.getRoundsByRoundId(roundId);
 
         try {
-            if (roundToGet == null) {
-                throw new InvalidParameterException("No round with the round ID of " + roundId);
+            if (roundsToGet.isEmpty()) {
+                throw new InvalidParameterException("No rounds with the round ID of " + roundId);
             }
-            return roundToGet;
+            return roundsToGet;
 
         } catch (DataAccessException | InvalidParameterException e) {
-            throw new InvalidParameterException("No round with the round ID of " + roundId);
+            throw new InvalidParameterException("No rounds with the round ID of " + roundId);
         }
     }
 
-    public Round getRoundByRoundIdTeamId(int roundId, int teamId) throws InvalidParameterException {
+    public Round getRoundByRoundIdTeamId(long roundId, int teamId) throws InvalidParameterException {
         logger.info("RoundService.getRoundByRoundIdTeamId() invoked");
 
         Round roundToGet = roundDao.getRoundByRoundIdTeamId(roundId, teamId);
@@ -101,11 +112,25 @@ public class RoundService {
         }
     }
 
-    public Round updateRoundByRoundIdTeamId(int roundId, int teamId, String roundScore, String spinScore, String spinToken) throws InvalidParameterException {
+    public List<Round> getRoundsByRoundIdGameId(long roundId, int gameId) throws InvalidParameterException {
+        logger.info("RoundService.getRoundsByRoundIdGameId() invoked");
+
+        List<Round> roudsToGet = roundDao.getRoundsByRoundIdGameId(roundId, gameId);
+
+        try {
+            if (roudsToGet.isEmpty()) {
+                throw new InvalidParameterException("No round with the round ID of " + roundId + " and game ID of " + gameId);
+            }
+            return roudsToGet;
+        } catch (DataAccessException | InvalidParameterException e) {
+            throw new InvalidParameterException("No round with the round ID of " + roundId + " and game ID of " + gameId);
+        }
+    }
+
+    public Round updateRoundByRoundIdTeamId(long roundId, int teamId, String roundScore, String spinScore, String spinToken) throws InvalidParameterException {
         logger.info("RoundService.updateRoundByRoundIdTeamId() invoked");
 
-        Round roundToUpdate = new Round();
-        roundToUpdate = getRoundByRoundIdTeamId(roundId, teamId);
+        Round roundToUpdate = getRoundByRoundIdTeamId(roundId, teamId);
 
         /*
             parse int inputs and set to roundToUpdate instance
@@ -174,4 +199,6 @@ public class RoundService {
         Round roundUpdated = roundDao.updateRoundByRoundIdTeamId(roundToUpdate);
         return roundUpdated;
     }
+
+
 }

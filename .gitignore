@@ -1,4 +1,9 @@
 .idea/
 .idea/workspace.xml
 HttpClient-FHM/.idea/compiler.xml
-WebService-FHM/out/
+WebServices-FHM/out/artifacts/
+WebServices-FHM/target/
+CmdLine-FHM/target/classes/
+WebServices-FHM/target/*
+*.class
+*.jar
