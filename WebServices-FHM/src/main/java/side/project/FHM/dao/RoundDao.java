@@ -44,14 +44,14 @@ public class RoundDao {
     }
 
     @Transactional
-    public Round getRoundByRoundId(int roundId) {
-        logger.info("RoundDao.getRoundByRoundId() invoked");
+    public List<Round> getRoundsByRoundId(long roundId) {
+        logger.info("RoundDao.getRoundsByRoundId() invoked");
 
         try {
-            Round roundToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId", Round.class)
+            List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId", Round.class)
                     .setParameter("roundId", roundId)
-                    .getSingleResult();
-            return roundToGet;
+                    .getResultList();
+            return roundsToGet;
 
         } catch (NoResultException e) {
             return null;
@@ -59,16 +59,32 @@ public class RoundDao {
     }
 
     @Transactional
-    public Round getRoundByRoundIdTeamId(int roundId, int teamId) {
+    public Round getRoundByRoundIdTeamId(long roundId, int teamId) {
         logger.info("RoundDao.getRoundByRoundIdTeamId() invoked");
 
         try {
             Round roundToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
-                            + " AND r.roundId.team.teamId = :teamId", Round.class)
+                            + " AND r.roundId.teamId = :teamId", Round.class)
                     .setParameter("roundId", roundId)
                     .setParameter("teamId", teamId)
                     .getSingleResult();
             return roundToGet;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    @Transactional
+    public List<Round> getRoundsByRoundIdGameId(long roundId, int gameId) {
+        logger.info("RoundDao.getRoundsByRoundIdGameId() invoked");
+
+        try {
+            List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
+                            + " AND r.roundId.game.gameId = :gameId", Round.class)
+                    .setParameter("roundId", roundId)
+                    .setParameter("gameId", gameId)
+                    .getResultList();
+            return roundsToGet;
         } catch (NoResultException e) {
             return null;
         }
@@ -80,5 +96,12 @@ public class RoundDao {
 
         this.entityManager.merge(roundToUpdate);
         return roundToUpdate;
+    }
+
+    public Long getSequenceId() {
+        logger.info("RoundDao.getSequenceId() invoked");
+
+        Long roundSeqId = (Long) entityManager.createNativeQuery("SELECT nextval('fhm.round_seq') ").getSingleResult();
+        return roundSeqId;
     }
 }

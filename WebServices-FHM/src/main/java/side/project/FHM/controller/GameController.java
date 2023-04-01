@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import side.project.FHM.exception.GamesDoesNotExist;
 import side.project.FHM.exception.InvalidParameterException;
+import side.project.FHM.exception.TeamDoesNotExist;
+import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Game;
 import side.project.FHM.service.GameService;
 
@@ -75,8 +77,10 @@ public class GameController {
                     , json.get("currentRound"));
             return ResponseEntity.status(200).body(gameToUpdate);
 
-        } catch (InvalidParameterException e) {
+        } catch (InvalidParameterException | WordDoesNotExist | TeamDoesNotExist e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+
 }

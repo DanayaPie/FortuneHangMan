@@ -39,7 +39,7 @@ public class TeamController {
         logger.info("TeamController.addTeam() invoked");
 
         try {
-            Team teamToAdd = teamService.addTeam(json.get("teamName"), json.get("teamTurn"));
+            Team teamToAdd = teamService.addTeam(json.get("teamName"), json.get("teamTurn"), json.get("gameId"));
             return ResponseEntity.status(200).body(teamToAdd);
 
         } catch (InvalidParameterException e) {

@@ -37,25 +37,57 @@ public class TeamService {
         }
     }
 
-    public Team addTeam(String teamName, String teamTurn) throws InvalidParameterException {
+    public Team addTeam(String teamName, String teamTurn, String gameId) throws InvalidParameterException {
         logger.info("TeamService.addTeam() invoked");
 
-        teamName = teamName.trim();
-
-        int teamTurnNumber;
-        int gameId = 0;
+        Team teamToAdd = new Team();
         int teamScore = 0;
 
+        teamName = teamName.trim();
         ValidateTeam.validateTeamNameBlank(teamName);
 
+        teamToAdd.setTeamName(teamName);
+        teamToAdd.setTotalScore(teamScore);
+
+        boolean teamInputsIntegerErrorBoolean = false;
+        StringBuilder teamInputsErrorString = new StringBuilder();
+
         try {
-            teamTurnNumber = Integer.parseInt(teamTurn.trim());
+            if (teamTurn.matches("^[0-9]*$")) {
+                //set team turn
+                int teamTurnNumber = Integer.parseInt(teamTurn.trim());
+                teamToAdd.setTeamTurn(teamTurnNumber);
+            } else {
+                logger.info("Team turn is not an int");
+
+                teamInputsErrorString.append("Team turn");
+                teamInputsIntegerErrorBoolean = true;
+            }
+
+            if (gameId.matches("^[0-9]*$")) {
+                // set game id
+                int gameIdNumber = Integer.parseInt(gameId.trim());
+                teamToAdd.setGameId(gameIdNumber);
+            } else {
+                logger.info("Total score is not an int");
+
+                if (teamInputsIntegerErrorBoolean) {
+                    teamInputsErrorString.append(", game ID");
+                } else {
+                    teamInputsErrorString.append("Game ID");
+                }
+            }
+
+            if (teamInputsIntegerErrorBoolean) {
+                teamInputsErrorString.append(" must be whole number.");
+                throw new NumberFormatException(teamInputsErrorString.toString());
+            }
         } catch (NumberFormatException e) {
-            throw new InvalidParameterException("Team turn must be a whole number");
+            throw new InvalidParameterException(teamInputsErrorString.toString());
         }
 
-        Team teamToAdd = teamDao.addTeam(teamName, teamTurnNumber, gameId, teamScore);
-        return teamToAdd;
+        Team addedTeam = teamDao.addTeam(teamToAdd);
+        return addedTeam;
     }
 
     public Team getTeamByTeamId(int teamId) throws TeamDoesNotExist, InvalidParameterException {
@@ -120,7 +152,7 @@ public class TeamService {
                 throw new NumberFormatException(teamInputsErrorString.toString());
             }
         } catch (NumberFormatException e) {
-            throw new InvalidParameterException("Total score must be a whole number.");
+            throw new InvalidParameterException(teamInputsErrorString.toString());
         }
 
         Team updatedTeam = teamDao.updateTeamByTeamId(teamToUpdate);

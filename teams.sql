@@ -18,8 +18,8 @@ CREATE TABLE team (
 INSERT INTO team
 	(team_name, team_turn, game_id, total_score)
 VALUES
-	('Dragon', 1, 0, 0),
-	('Monkey', 2, 0, 0)
+	('Dragon', 1, 1, 0),
+	('Monkey', 2, 1, 0)
 
 
 -- ===== QUERYING

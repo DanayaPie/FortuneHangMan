@@ -1,6 +1,12 @@
 .idea/
 .idea/workspace.xml
 HttpClient-FHM/.idea/compiler.xml
+WebServices-FHM/out/artifacts/
+WebServices-FHM/target/
+CmdLine-FHM/target/classes/
+WebServices-FHM/target/*
+*.class
+*.jar
 WebService-FHM/out/
 fortune-hangman-ui/node_modules
 

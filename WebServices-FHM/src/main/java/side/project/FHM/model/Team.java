@@ -10,7 +10,7 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "team_id", insertable = false)
+    @Column(name = "team_id", insertable = false,nullable = false)
     private int teamId;
 
     @Column(name = "team_name", nullable = false)
