@@ -7,3 +7,27 @@ CmdLine-FHM/target/classes/
 WebServices-FHM/target/*
 *.class
 *.jar
+WebService-FHM/out/
+fortune-hangman-ui/node_modules
+
+# dependencies
+/node_modules
+fortune-hangman-ui/.pnp
+fortune-hangman-ui/.pnp.js
+
+# testing
+fortune-hangman-ui/coverage
+
+# production
+fortune-hangman-ui/build
+
+# misc
+fortune-hangman-ui/.DS_Store
+fortune-hangman-ui/.env.local
+fortune-hangman-ui/.env.development.local
+fortune-hangman-ui/.env.test.local
+fortune-hangman-ui/.env.production.local
+
+fortune-hangman-ui/npm-debug.log*
+fortune-hangman-ui/yarn-debug.log*
+fortune-hangman-ui/yarn-error.log*

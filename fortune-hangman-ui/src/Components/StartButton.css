@@ -1,0 +1,29 @@
+.btn-primary{
+    background-color: blueviolet;
+    border-color: white;
+    color: white;
+}
+.btn-primary:hover{
+    background-color: gold;
+    border-color:white;
+    color: blueviolet;
+}
+
+.btn-primary:active{
+    background-color: blueviolet !important;
+    border-color: blueviolet !important;
+    color: white!important;
+    
+}
+
+.btn-primary:visited{
+    background-color: blueviolet;
+    border-color: white;
+    color: white;
+}
+
+.btn-primary:disabled{
+    background-color: gray;
+    border-color: white;
+    color: white;
+}
