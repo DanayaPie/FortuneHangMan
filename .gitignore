@@ -7,6 +7,8 @@ CmdLine-FHM/target/classes/
 WebServices-FHM/target/*
 *.class
 *.jar
+*.iml
+
 WebService-FHM/out/
 fortune-hangman-ui/node_modules
 
@@ -31,3 +33,4 @@ fortune-hangman-ui/.env.production.local
 fortune-hangman-ui/npm-debug.log*
 fortune-hangman-ui/yarn-debug.log*
 fortune-hangman-ui/yarn-error.log*
+
