@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import side.project.FHM.dao.GameDao;
 import side.project.FHM.exception.GamesDoesNotExist;
 import side.project.FHM.exception.InvalidParameterException;
+import side.project.FHM.exception.TeamDoesNotExist;
 import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Game;
 import side.project.FHM.model.Word;
@@ -26,6 +27,9 @@ public class GameService {
 
     @Autowired
     private WordService wordService;
+
+    @Autowired
+    private TeamService teamService;
 
     public List<Game> getAllGames() throws GamesDoesNotExist, InvalidParameterException {
         logger.info("GameService.getAllGames() invoked");
@@ -86,11 +90,14 @@ public class GameService {
         }
     }
 
-    public Game updateGameByGameId(int gameId, String roundId, String wordId, String gameStatus, String letterGuessed, String currentTeamTurn, String currentRound) throws InvalidParameterException {
+    public Game updateGameByGameId(int gameId, String roundId, String wordId, String gameStatus, String letterGuessed, String currentTeamTurn, String currentRound) throws InvalidParameterException, WordDoesNotExist, TeamDoesNotExist {
         logger.info("GameService.updateGameByGameId() invoked");
 
         Game gameToUpdate = getGameByGameId(gameId);
-
+        Integer roundIdNumber;
+        Integer wordIdNumber = null;
+        Integer currentTeamTurnNumber = null;
+        Word wordToGet;
         /*
             parse int inputs and set gameToUpdate instance
          */
@@ -101,11 +108,11 @@ public class GameService {
 
             // round ID
             if (roundId != null) {
-                logger.info("Updating round ID");
+                logger.info("Parse and update round ID");
 
                 if (roundId.matches("^[0-9]*$")) {
-                    // set round ID
-                    int roundIdNumber = Integer.parseInt(roundId.trim());
+                    // parse round ID
+                    roundIdNumber = Integer.parseInt(roundId.trim());
                     gameToUpdate.setRoundId(roundIdNumber);
 
                 } else {
@@ -114,19 +121,15 @@ public class GameService {
                     gameInputsIntegerErrorString.append("Round ID");
                     gameInputsIntegerErrorBoolean = true;
                 }
-
             }
 
             // word ID
             if (wordId != null) {
-                logger.info("Updating word ID");
+                logger.info("Parsing word ID");
 
                 if (wordId.matches("[0-9]+")) {
-                    // set word
-                    int wordIdNumber = Integer.parseInt(wordId.trim());
-                    Word wordToGet = wordService.getWordByWordId(wordIdNumber);
-                    gameToUpdate.setWord(wordToGet);
-
+                    // parse word ID
+                    wordIdNumber = Integer.parseInt(wordId.trim());
                 } else {
                     logger.info("Word ID is not an int");
 
@@ -141,13 +144,11 @@ public class GameService {
 
             // current team turn
             if (currentTeamTurn != null) {
-                logger.info("Updating current team turn");
+                logger.info("Parsing current team turn");
 
                 if (currentTeamTurn.matches("[0-9]+")) {
-                    // set current team turn
-                    int currentTeamTurnNumber = Integer.parseInt(currentTeamTurn.trim());
-                    gameToUpdate.setCurrentTeamTurn(currentTeamTurnNumber);
-
+                    // parse current team turn
+                    currentTeamTurnNumber = Integer.parseInt(currentTeamTurn.trim());
                 } else {
                     logger.info("Current team turn is not an int");
 
@@ -162,7 +163,7 @@ public class GameService {
 
             // current round
             if (currentRound != null) {
-                logger.info("Update current round");
+                logger.info("Parse and update current round");
 
                 if (currentRound.matches("[0-9]+")) {
                     // set current round
@@ -187,8 +188,18 @@ public class GameService {
                 throw new NumberFormatException(gameInputsIntegerErrorString.toString());
             }
 
-        } catch (NumberFormatException | WordDoesNotExist e) {
+        } catch (NumberFormatException e) {
             throw new InvalidParameterException(gameInputsIntegerErrorString.toString());
+        }
+
+        /*
+            set word
+         */
+        if (wordId != null) {
+            logger.info("Updating word ID");
+
+            wordToGet = wordService.getWordByWordId(wordIdNumber);
+            gameToUpdate.setWord(wordToGet);
         }
 
         /*
@@ -205,7 +216,7 @@ public class GameService {
         }
 
         /*
-            set letter guessed of gameToUpdate instance
+            set letter guessed
          */
         if (letterGuessed != null) {
             logger.info("Updating letter guessed");
@@ -221,6 +232,16 @@ public class GameService {
             letterGuessedStrB.append(letterGuessed);
             letterGuessedStr = letterGuessedStrB.toString();
             gameToUpdate.setLetterGuessed(letterGuessedStr);
+        }
+
+        /*
+            set current team turn
+         */
+        if (currentTeamTurn != null) {
+            logger.info("Updating current team turn");
+
+            teamService.getTeamByTeamId(currentTeamTurnNumber);
+            gameToUpdate.setCurrentTeamTurn(currentTeamTurnNumber);
         }
 
         Game updatedGame = gameDao.updateGameByGameId(gameToUpdate);
