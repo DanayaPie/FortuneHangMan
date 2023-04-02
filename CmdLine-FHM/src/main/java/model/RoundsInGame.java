@@ -1,52 +1,30 @@
 package model;
 
-import java.util.List;
 import java.util.Objects;
 
-public class Round {
+public class RoundsInGame {
 
-    private int roundId;
-    private int teamId;
-    private int gameId;
+    private RoundId roundId;
     private int roundScore;
     private int spinScore;
     private boolean spinToken;
 
-    public Round() {
+    public RoundsInGame() {
     }
 
-
-    public Round(int roundId, int teamId, int gameId, int roundScore, int spinScore, boolean spinToken) {
+    public RoundsInGame(RoundId roundId, int roundScore, int spinScore, boolean spinToken) {
         this.roundId = roundId;
-        this.teamId = teamId;
-        this.gameId = gameId;
         this.roundScore = roundScore;
         this.spinScore = spinScore;
         this.spinToken = spinToken;
     }
 
-    public int getRoundId() {
+    public RoundId getRoundId() {
         return roundId;
     }
 
-    public void setRoundId(int roundId) {
+    public void setRoundId(RoundId roundId) {
         this.roundId = roundId;
-    }
-
-    public int getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
-    }
-
-    public int getGameId() {
-        return gameId;
-    }
-
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
     }
 
     public int getRoundScore() {
@@ -73,26 +51,23 @@ public class Round {
         this.spinToken = spinToken;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Round)) return false;
-        Round round = (Round) o;
-        return roundId == round.roundId && teamId == round.teamId && gameId == round.gameId;
+        if (!(o instanceof RoundsInGame)) return false;
+        RoundsInGame that = (RoundsInGame) o;
+        return Objects.equals(roundId, that.roundId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roundId, teamId, gameId);
+        return Objects.hash(roundId);
     }
 
     @Override
     public String toString() {
-        return "Round{" +
+        return "RoundResponse{" +
                 "roundId=" + roundId +
-                ", teamId=" + teamId +
-                ", gameID=" + gameId +
                 ", roundScore=" + roundScore +
                 ", spinScore=" + spinScore +
                 ", spinToken=" + spinToken +

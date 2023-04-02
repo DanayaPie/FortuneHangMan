@@ -3,9 +3,7 @@ package play;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import model.Game;
-import model.Round;
-import model.Team;
+import model.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -17,8 +15,10 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.util.*;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class GameSetUp {
 
@@ -27,6 +27,8 @@ public class GameSetUp {
     private static HttpClient client = HttpClient.newHttpClient();
     private static Gson gson = new Gson();
     private static Game game = new Game();
+    private static List<RoundsInGame> roundList = new ArrayList<>();
+    private static Round round = new Round();
 
     // support async or sync connection
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -45,9 +47,9 @@ public class GameSetUp {
             Request
          */
         HttpPost addGameRequest = new HttpPost("http://localhost:8080/game");
-        StringEntity gameToAdd = new StringEntity(mapper.writeValueAsString(game)
+        StringEntity gameToAddEntity = new StringEntity(mapper.writeValueAsString(game)
                 , ContentType.APPLICATION_JSON);
-        addGameRequest.setEntity(gameToAdd);
+        addGameRequest.setEntity(gameToAddEntity);
 
         /*
             Response
@@ -87,9 +89,9 @@ public class GameSetUp {
             teamToAdd.setGameId(gameId);
 
             HttpPost addTeamRequest = new HttpPost("http://localhost:8080/team");
-            StringEntity teamToAddJson = new StringEntity(mapper.writeValueAsString(teamToAdd)
+            StringEntity teamToAddEntity = new StringEntity(mapper.writeValueAsString(teamToAdd)
                     , ContentType.APPLICATION_JSON);
-            addTeamRequest.setEntity(teamToAddJson);
+            addTeamRequest.setEntity(teamToAddEntity);
 
             CloseableHttpResponse addedTeamResponse = httpClient.execute(addTeamRequest);
 
@@ -113,31 +115,36 @@ public class GameSetUp {
 
     public static void addRound(List<Integer> teamIds) throws IOException {
 
-        Round roundToAdd = new Round();
+        AddRound roundToAdd = new AddRound();
         roundToAdd.setTeamIds(teamIds);
+        game.setGameId(2);
         roundToAdd.setGameId(game.getGameId());
 
         HttpPost addRoundRequest = new HttpPost("http://localhost:8080/round");
-        StringEntity roundToAddJson = new StringEntity(mapper.writeValueAsString(roundToAdd)
+        StringEntity roundToAddEntity = new StringEntity(mapper.writeValueAsString(roundToAdd)
                 , ContentType.APPLICATION_JSON);
 
-        System.out.println("roundToAddJson");
-        addRoundRequest.setEntity(roundToAddJson);
+        addRoundRequest.setEntity(roundToAddEntity);
+//        System.out.println("addRoundRequest: " + EntityUtils.toString(roundToAddEntity));
 
         CloseableHttpResponse addedRoundResponse = httpClient.execute(addRoundRequest);
-        System.out.println("executed");
 
         if (addedRoundResponse.getStatusLine().getStatusCode() != 200) {
-            System.out.println("Round is not added! Status code: " + addedRoundResponse.getStatusLine().getStatusCode() + " - " + addedRoundResponse.getEntity());
-        } else {
-            HttpEntity responseEntity = addedRoundResponse.getEntity();
-            Map<String, String> map = gson.fromJson(responseEntity.toString(), HashMap.class);
-
-            System.out.println(map);
-
-//            Round addedRound = mapper.readValue(EntityUtils.toString(responseEntity)
-//                    , new TypeReference<Round>() {
-//                    });
+            System.out.println("Round is not added! Status code: " + addedRoundResponse.getStatusLine().getStatusCode() + " - " + addedRoundResponse.getStatusLine().getReasonPhrase());
         }
+        HttpEntity responseEntity = addedRoundResponse.getEntity();
+        roundList = mapper.readValue(EntityUtils.toString(responseEntity)
+                , new TypeReference<>() {
+                });
+
+        for (int i = 0; i < roundList.size(); i++) {
+
+            round.setRoundId(roundList.get(0).getRoundId().getRoundId());
+            round.setTeamId(roundList.get(0).getRoundId().getTeamId());
+            round.setGameId(roundList.get(0).getRoundId().getGame().getGameId());
+
+//            updateGame()
+        }
+
     }
 }
