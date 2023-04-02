@@ -67,10 +67,8 @@ public class PostRequests {
         }
 
         HttpEntity responseEntity = addedGameResponse.getEntity();
-        Game addedGame = new Game();
-
-        addedGame = gameMapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
-        });
+        Game addedGame = gameMapper.readValue(EntityUtils.toString(responseEntity)
+                , new TypeReference<Game>() {});
 
         System.out.println("Game ID: " + addedGame.getGameId());
     }

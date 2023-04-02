@@ -50,12 +50,11 @@ public class RoundService {
 
     public List<Round> addRound(List<Integer> teamIds, Integer gameId) throws InvalidParameterException, TeamDoesNotExist {
         logger.info("RoundService.addRound() invoked");
-        logger.info("sequence [{}]", roundDao.getSequenceId());
+        logger.debug("sequence [{}]", roundDao.getSequenceId());
 
-        long roundId = roundDao.getSequenceId();
+        long roundId = getSequenceId();
         int roundScore = 0;
         int spinScore = 0;
-        boolean spinToken = false;
         List<Round> listRoundAdded = new ArrayList<>();
 
         Game game = gameService.getGameByGameId(gameId);
@@ -72,13 +71,19 @@ public class RoundService {
             roundToAdd.setRoundId(roundIdToAdd);
             roundToAdd.setRoundScore(roundScore);
             roundToAdd.setSpinScore(spinScore);
-            roundToAdd.setSpinToken(spinToken);
+            roundToAdd.setSpinToken(false);
 
             Round roundAdded = roundDao.addRound(roundToAdd);
             listRoundAdded.add(roundAdded);
 
         }
         return listRoundAdded;
+    }
+
+    private long getSequenceId() {
+        logger.info("RoundService.getSequenceId() invoked");
+
+        return roundDao.getSequenceId();
     }
 
     public List<Round> getRoundsByRoundId(long roundId) throws InvalidParameterException {

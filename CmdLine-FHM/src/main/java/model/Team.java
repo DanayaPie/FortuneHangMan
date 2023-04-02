@@ -7,15 +7,17 @@ public class Team {
     private int teamId;
     private String teamName;
     private int teamTurn;
+    private int gameId;
     private int totalScore;
 
     public Team() {
     }
 
-    public Team(int teamId, String teamName, int teamTurn, int totalScore) {
+    public Team(int teamId, String teamName, int teamTurn, int gameId, int totalScore) {
         this.teamId = teamId;
         this.teamName = teamName;
         this.teamTurn = teamTurn;
+        this.gameId = gameId;
         this.totalScore = totalScore;
     }
 
@@ -41,6 +43,14 @@ public class Team {
 
     public void setTeamTurn(int teamTurn) {
         this.teamTurn = teamTurn;
+    }
+
+    public int getGameId() {
+        return gameId;
+    }
+
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     public int getTotalScore() {
@@ -70,6 +80,7 @@ public class Team {
                 "teamId=" + teamId +
                 ", teamName='" + teamName + '\'' +
                 ", teamTurn=" + teamTurn +
+                ", gameId=" + gameId +
                 ", totalScore=" + totalScore +
                 '}';
     }
