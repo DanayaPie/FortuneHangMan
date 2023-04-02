@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import side.project.FHM.dao.WordDao;
+import side.project.FHM.exception.CategoryDoesNotExist;
 import side.project.FHM.exception.InvalidParameterException;
 import side.project.FHM.exception.WordDoesNotExist;
 import side.project.FHM.model.Word;
@@ -98,7 +99,7 @@ public class WordService {
 
         List<Word> wordsInCategory = wordDao.getWordsByCategory(categoryCaps);
 
-        logger.info("wordsIncategory {}" + wordsInCategory);
+        logger.debug("wordsIncategory {}" + wordsInCategory);
         try {
             if (!wordsInCategory.isEmpty()) {
                 Random rand = new Random();
@@ -110,6 +111,21 @@ public class WordService {
         } catch (DataAccessException e) {
             throw new InvalidParameterException(categoryCaps + " category does not exist.");
 
+        }
+    }
+
+    public List<String> getAllCategories() throws InvalidParameterException {
+        logger.info("WordService.getAllCategories() invoked");
+
+        List<String> allCategories = wordDao.getAllCategories();
+
+        try {
+            if (allCategories.isEmpty()) {
+                throw new CategoryDoesNotExist("No categories on file.");
+            }
+            return allCategories;
+        } catch (DataAccessException | CategoryDoesNotExist e) {
+            throw new InvalidParameterException("No categories on file.");
         }
     }
 }

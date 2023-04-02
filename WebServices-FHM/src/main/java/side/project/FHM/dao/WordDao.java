@@ -71,4 +71,18 @@ public class WordDao {
             return null;
         }
     }
+
+    @Transactional
+    public List<String> getAllCategories() {
+        logger.info("WordDao.getAllCategories() invoked");
+
+        try {
+            List<String> allCategories = entityManager.createQuery("SELECT DISTINCT(w.category) FROM Word w", String.class).getResultList();
+
+            logger.debug("allCategories: {}", allCategories);
+            return allCategories;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

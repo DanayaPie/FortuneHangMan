@@ -12,6 +12,7 @@ import side.project.FHM.model.Word;
 import side.project.FHM.service.WordService;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,6 +73,19 @@ public class WordController implements InitializingBean {
             return ResponseEntity.status(200).body(randomWord);
 
         } catch (InvalidParameterException | WordDoesNotExist e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @GetMapping(path = "/category")
+    public ResponseEntity<Object> getAllCategories() {
+        logger.info("WordController.getAllCategories() invoked");
+
+        try {
+            List<String> allCategories = wordService.getAllCategories();
+            return ResponseEntity.status(200).body(allCategories);
+
+        } catch (InvalidParameterException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
