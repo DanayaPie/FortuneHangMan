@@ -29,3 +29,6 @@ WHERE word = "";
 
 SELECT *
 FROM word;
+
+SELECT DISTINCT category
+FROM word;
