@@ -15,7 +15,6 @@ public class ValidateGame {
     private static Logger logger = LoggerFactory.getLogger(ValidateGame.class);
     private static Set<String> validGameStatus = new HashSet<>(Arrays.asList("IN PROGRESS", "ENDED"));
 
-
     @Autowired
     private GameService gameService;
 
