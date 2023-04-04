@@ -1,6 +1,5 @@
 package model;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Round {
@@ -71,7 +70,6 @@ public class Round {
     public void setSpinToken(boolean spinToken) {
         this.spinToken = spinToken;
     }
-
 
     @Override
     public boolean equals(Object o) {

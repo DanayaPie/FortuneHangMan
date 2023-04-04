@@ -2,10 +2,21 @@ import play.PlayGame;
 
 public class CmdLineApp {
     public static void main(String[] args) throws Exception {
-        System.out.println("Welcome to Fortune Hang Man!");
+        System.out.println("===============================");
+        System.out.println(" ________         $$$$$");
+        System.out.println(" |      |        $  $  $");
+        System.out.println(" $      |       $   $");
+        System.out.println("/|\\     |        $  $");
+        System.out.println(" |      |         $$$$$");
+        System.out.println("/ \\     |           $  $");
+        System.out.println("        |           $   $");
+        System.out.println("        |        $  $  $");
+        System.out.println("     -------      $$$$$");
+        System.out.println(" ================================");
+        System.out.println("|  Welcome to Fortune Hang Man!  |");
+        System.out.println(" ================================");
 
         PlayGame.addNewGame();
-
 //        PlayGame.addTeam();
 
 //        List<Integer> teamIds = new ArrayList() {{
@@ -14,12 +25,16 @@ public class CmdLineApp {
 //        }};
 //        PlayGame.addRound(teamIds);
 
+//        PlayGame.setRound();
 //        PlayGame.chooseCategory();
-//        PlayGame.updateGame();
-//        PlayGame.updateWordInGame();
-//        PlayGame.updateCurrentRound(2);
+//        PlayGame.updateGameDB();
+//        PlayGame.updateWordInGameDB();
+//        PlayGame.updateCurrentRoundInGameDB(2);
 //        PlayGame.setWordToGuess();
-//        PlayGame.playTheGame();
+
+//        PlayGame.playTheGame(0);
+//        PlayGame.updateRoundDB();
+//        PlayGame.getRoundByRoundIdTeamId();
 
         /*
         GetRequests.getAllWordsRequest();
