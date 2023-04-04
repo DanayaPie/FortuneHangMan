@@ -12,9 +12,10 @@ function Word(props) {
         <div className='wordWrapper'>
             {/* Dynamic list of letters needed */}
             {letters.map((letter) => (
-                <Letter letter={letter.toUpperCase()}
+                <Letter
+                    letter={letter.toUpperCase()}
                     key={props.wordId + Math.random()}
-                    lettersGuessed={props.lettersGuessed} 
+                    showGuessedLetters={props.showGuessedLetters}
                 />
             ))}
         </div>

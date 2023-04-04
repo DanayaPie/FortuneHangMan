@@ -15,7 +15,7 @@ function Hangman(props) {
                 word={word}
                 wordId={props.wordId}
                 key={props.wordId + Math.random()}
-                lettersGuessed={props.lettersGuessed} 
+                showGuessedLetters={props.showGuessedLetters} 
                 />
             ))}
         </div>

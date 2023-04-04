@@ -5,7 +5,6 @@ function NewGame(props) {
   const [gameName, setGameName] = useState('');
 
   function gameNameChangeHandler(event) {
-    console.log(event.target.value);
     setGameName(event.target.value);
   }
 

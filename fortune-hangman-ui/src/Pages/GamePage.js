@@ -4,8 +4,7 @@ import { useState } from 'react';
 
 
 function GamePage() {
-
-    const [game, setGame] = useState({
+    const DUMMY_GAME = {
         gameId: 1,
         gameName: "Fun Time",
         roundId: 1,
@@ -15,7 +14,9 @@ function GamePage() {
         totalTeam: 2,
         currentTeamTurn: 1,
         currentRound: 1
-    });
+    }
+    const [game, setGame] = useState({ ...DUMMY_GAME });
+
     const DUMMY_TEAMS = [
         {
             teamId: 10,
@@ -32,6 +33,7 @@ function GamePage() {
             totalScore: 0
         }
     ]
+    const [teams, setTeams] = useState([...DUMMY_TEAMS]);
 
     const DUMMY_ROUNDS = [
         {
@@ -50,41 +52,60 @@ function GamePage() {
         }
     ]
 
+    const [roundScores, setRoundScores] = useState([...DUMMY_ROUNDS]);
+
+    const updateRoundScoreHandler = (numberToAdd, roundId, teamId) => {
+        setRoundScores((prevRoundScores) => {
+            const updatedRoundScore = prevRoundScores.map((roundScore) => {
+                if (roundScore.roundId === roundId && roundScore.teamId === teamId) {
+                    return {...roundScore, roundScore: roundScore.roundScore + numberToAdd};
+                }
+                return roundScore
+            })
+            return [...updatedRoundScore];
+        })
+    }
+
+    const updateRoundIdHandler = (event) => {
+        setGame((prevState) => {
+            return { ...prevState, roundId: event.target.value }
+        });
+    };
+
     const DUMMY_WORDS = [
         {
-            wordId:1,
-            category:"Fruits",
-            word:"Mango"
+            wordId: 1,
+            category: "Fruits",
+            word: "Mango"
         },
         {
-            wordId:2,
-            category:"Fruits",
-            word:"Apple"
+            wordId: 2,
+            category: "Fruits",
+            word: "Apple"
         },
         {
-            wordId:3,
-            category:"Fruits",
-            word:"Kiwi"
+            wordId: 3,
+            category: "Fruits",
+            word: "Kiwi"
         },
         {
-            wordId:4,
-            category:"Anime Titles",
-            word:"WorldEnd: What Do You Do At The End Of The World? Are You Busy? Will You Save Us?"
+            wordId: 4,
+            category: "Anime Titles",
+            word: "WorldEnd: What Do You Do At The End Of The World? Are You Busy? Will You Save Us?"
         },
         {
-            wordId:5,
-            category:"Anime Titles",
-            word:"The Misfit Of Demon King Academy: History's Strongest Demon King Reincarnates & Goes To School With His Descendants"
+            wordId: 5,
+            category: "Anime Titles",
+            word: "The Misfit Of Demon King Academy: History's Strongest Demon King Reincarnates & Goes To School With His Descendants"
         },
         {
-            wordId:6,
-            category:"Anime Titles",
-            word:"Suppose A Kid From The Last Dungeon Boonies Moved To A Starter Town"
+            wordId: 6,
+            category: "Anime Titles",
+            word: "Suppose A Kid From The Last Dungeon Boonies Moved To A Starter Town"
         }
 
     ]
 
-    const [teams, setTeams] = useState({ DUMMY_TEAMS });
 
     const updateTeamsHandler = teams => {
         setTeams((prevTeams) => {
@@ -92,29 +113,9 @@ function GamePage() {
         })
     }
 
-    const [roundScores, setRoundScores] = useState({ DUMMY_ROUNDS });
-
-    const updateRoundScoreHandler = roundScores => {
-        setRoundScores((prevRoundScores) => {
-            return [roundScores, ...prevRoundScores];
-        })
-    }
-
-    // const updateGameIdHandler = (event) => {
-    //     setGame((prevState) => {
-    //         return { ...prevState, gameId: event.target.value }
-    //     });
-    // };
-
-    // const updateGameNameHandler = (event) => {
-    //     setGame((prevState) => {
-    //         return { ...prevState, gameName: event.target.value }
-    //     });
-    // };
-
-    const updateRoundIdHandler = (event) => {
+    const updateLetterGuessedHandler = (letter) => {
         setGame((prevState) => {
-            return { ...prevState, roundId: event.target.value }
+            return { ...prevState, letterGuessed: prevState.letterGuessed.concat(letter) }
         });
     };
 
@@ -130,18 +131,6 @@ function GamePage() {
         });
     };
 
-    const updateLetterGuessedHandler = (letter) => {
-        console.log(letter)
-        setGame((prevState) => {
-            return { ...prevState, letterGuessed: prevState.letterGuessed.concat(letter) }
-        });
-    };
-
-    // const updateTotalTeamHandler = (event) => {
-    //     setGame((prevState) => {
-    //         return { ...prevState, totalTeam: event.target.value }
-    //     });
-    // };
 
     const updateCurrentTeamTurnHandler = (event) => {
         setGame((prevState) => {
@@ -155,9 +144,11 @@ function GamePage() {
         });
     };
 
+
     return (
         <div className='App'>
-            <Game game={game}
+            <Game
+                game={game}
                 teams={teams}
                 roundScores={roundScores}
                 words={DUMMY_WORDS}
