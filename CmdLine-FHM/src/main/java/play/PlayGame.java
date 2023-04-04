@@ -416,17 +416,49 @@ public class PlayGame {
         symbolsWithSpaceAfter.add(':');
         symbolsWithSpaceAfter.add(';');
         symbolsWithSpaceAfter.add('$');
+        symbolsWithSpaceAfter.add(',');
 
-        String w = "It's fun to 'code!";
+
+        String w = "It's fun to 'code! , but only somet:me";
         word.setWord(w.toUpperCase());
-        String wordToSensor = word.getWord();
+        String wordChosen = word.getWord();
+        StringBuilder adjustedSpaceWord = new StringBuilder();
 
 //        game.getWord().setWord(w.toUpperCase());
-//        String wordToSensor = game.getWord().getWord();
+//        String wordChosen = game.getWord().getWord();
 
-        for (int i = 0; i < wordToSensor.length(); i++) {
+        /*
+            setting spaces on in the wordChosen
+         */
+        for (int i = 0; i < wordChosen.length(); i++) {
 
-            char currentChar = wordToSensor.charAt(i);
+            char currentChar = wordChosen.charAt(i);
+
+            if (symbolsWithSpaceAfter.contains(currentChar)) { // if symbols allows space after
+                adjustedSpaceWord.append(currentChar);
+
+            } else if (symbolsNoSpaceAfter.contains(currentChar)) { // if symbols don't allow space after then check if char after is alphabet
+                adjustedSpaceWord.append(currentChar);
+
+                // if char after ' or - is an alphabet and if i < wordChosen length, add space after
+                if ((i + 1) < wordChosen.length() && wordChosen.charAt(i + 1) >= 'A' && wordChosen.charAt(i + 1) <= 'Z') {
+                    adjustedSpaceWord.append(wordChosen.charAt(i + 1));
+                    i++;
+                }
+            } else if (i == 0) {
+                adjustedSpaceWord.append(wordChosen.charAt(0));
+            } else if (wordChosen.charAt(i) == ' ') {
+                adjustedSpaceWord.append("  ");
+            } else {
+                adjustedSpaceWord.append(" " + currentChar);
+            }
+        }
+
+        /*
+            setting word to guess in the game
+         */
+        for (int i = 0; i < adjustedSpaceWord.length(); i++) {
+            char currentChar = adjustedSpaceWord.charAt(i);
 
             if (!symbolsNoSpaceAfter.contains(currentChar) && !symbolsWithSpaceAfter.contains(currentChar) && currentChar != ' ') {
                 if (!charMap.containsKey(currentChar)) {
@@ -436,14 +468,14 @@ public class PlayGame {
                     charMap.get(currentChar).add(i);
                 }
 
-            } else if (currentChar == '\'' && (i + 1) < wordToSensor.length()) { // add character after ' because it will get skip
-                char nextChar = wordToSensor.charAt(i+1);
+            } else if (currentChar == '\'' && (i + 1) < adjustedSpaceWord.length()) { // add character after ' because it will get skip
+                char nextChar = adjustedSpaceWord.charAt(i + 1);
 
                 if (!charMap.containsKey(nextChar)) {
                     charMap.put(nextChar, new ArrayList<>()); // instantiate arrayList at the first char
-                    charMap.get(nextChar).add(i+1); // add the first index to the value of map
+                    charMap.get(nextChar).add(i + 1); // add the first index to the value of map
                 } else {
-                    charMap.get(nextChar).add(i+1);
+                    charMap.get(nextChar).add(i + 1);
                 }
             }
 
@@ -452,23 +484,23 @@ public class PlayGame {
             } else if (symbolsNoSpaceAfter.contains(currentChar)) { // if symbols dont allows space after if next char is an alphabet
                 wordToGuess.append(currentChar);
 
-                // if char after ' or - is an alphabet and if i < wordToSensor length, add space after
-                if ((i + 1) < wordToSensor.length() && wordToSensor.charAt(i + 1) >= 'A' && wordToSensor.charAt(i + 1) <= 'Z') {
+                // if char after ' or - is an alphabet and i + 1 must be less than the length of the adjustedSpaceWord, then add space after
+                if ((i + 1) < adjustedSpaceWord.length() && adjustedSpaceWord.charAt(i + 1) >= 'A' && adjustedSpaceWord.charAt(i + 1) <= 'Z') {
                     wordToGuess.append("_");
                     i++;
                 }
-            } else if (i == 0) {
-                wordToGuess.append("_");
-            } else if (wordToSensor.charAt(i) == ' ') {
-                wordToGuess.append("  ");
+            } else if (adjustedSpaceWord.charAt(i) == ' ') {
+                wordToGuess.append(" ");
             } else {
-                wordToGuess.append(" _");
+                wordToGuess.append("_");
             }
         }
 
-        System.out.println(charMap.toString());
-
-        System.out.println(wordToGuess);
+//        System.out.println(charMap.toString());
+//        System.out.println(adjustedSpaceWord);
+//        System.out.println(adjustedSpaceWord.length() - 1);
+//        System.out.println(wordToGuess);
+//        System.out.println(wordToGuess.length() - 1);
     }
 
     private static void spinTheWheel() {
