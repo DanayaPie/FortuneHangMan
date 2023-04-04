@@ -1,15 +1,10 @@
 import play.PlayGame;
-import practice.GetRequests;
-import practice.PostRequests;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CmdLineApp {
     public static void main(String[] args) throws Exception {
         System.out.println("Welcome to Fortune Hang Man!");
 
-//        PlayGame.addNewGame();
+        PlayGame.addNewGame();
 
 //        PlayGame.addTeam();
 
@@ -19,11 +14,12 @@ public class CmdLineApp {
 //        }};
 //        PlayGame.addRound(teamIds);
 
-        PlayGame.chooseCategory();
-
-
-
-
+//        PlayGame.chooseCategory();
+//        PlayGame.updateGame();
+//        PlayGame.updateWordInGame();
+//        PlayGame.updateCurrentRound(2);
+//        PlayGame.setWordToGuess();
+//        PlayGame.playTheGame();
 
         /*
         GetRequests.getAllWordsRequest();

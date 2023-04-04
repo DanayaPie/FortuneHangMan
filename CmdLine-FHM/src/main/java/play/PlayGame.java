@@ -8,6 +8,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -15,10 +17,9 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class PlayGame {
 
@@ -33,10 +34,13 @@ public class PlayGame {
     private static Word word = new Word();
     private static List<Integer> wordIdList = new ArrayList<>();
 
+    private static StringBuilder wordToGuess = new StringBuilder();
+    private static Map<Character, List<Integer>> charMap = new HashMap<>();
+
     // support async or sync connection
     final static CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public static void addNewGame() throws IOException {
+    public static void addNewGame() throws IOException, URISyntaxException {
 
         System.out.print("Game Name: ");
         String gameName = scan.nextLine();
@@ -50,7 +54,7 @@ public class PlayGame {
                 totalTeam = Integer.parseInt(scan.nextLine());
 
                 if (totalTeam < 2 || totalTeam > 4) {
-                    System.out.println("int");
+//                    System.out.println("int");
                     System.out.println("Total number of team must be a whole number and must be between 2-4.");
                     System.out.print("Total Number of Team: ");
                 } else {
@@ -58,7 +62,7 @@ public class PlayGame {
                     break;
                 }
             } catch (NumberFormatException e) {
-                System.out.println("not int");
+//                System.out.println("not int");
                 System.out.println("Total number of team must be a whole number and must be between 2-4.");
                 System.out.print("Total Number of Team: ");
             }
@@ -80,18 +84,18 @@ public class PlayGame {
         if (addedGameResponse.getStatusLine().
 
                 getStatusCode() != 200) {
-            System.out.println("Round is not added! Status code: " + addedGameResponse.getStatusLine().getStatusCode() + " - " + addedGameResponse.getStatusLine().getReasonPhrase());
+            System.out.println("Game is not added! Status code: " + addedGameResponse.getStatusLine().getStatusCode() + " - " + addedGameResponse.getStatusLine().getReasonPhrase());
         }
 
         HttpEntity responseEntity = addedGameResponse.getEntity();
-        mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
+        game = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
         });
 
         addTeam();
 
     }
 
-    private static void addTeam() throws IOException {
+    private static void addTeam() throws IOException, URISyntaxException {
 
         int totalTeam = game.getTotalTeam();
         String teamName;
@@ -135,11 +139,11 @@ public class PlayGame {
         addRound(teamIds);
     }
 
-    public static void addRound(List<Integer> teamIds) throws IOException {
+    public static void addRound(List<Integer> teamIds) throws IOException, URISyntaxException {
 
         AddRound roundToAdd = new AddRound();
         roundToAdd.setTeamIds(teamIds);
-        game.setGameId(2);
+//        game.setGameId(2);
         roundToAdd.setGameId(game.getGameId());
 
         HttpPost addRoundRequest = new HttpPost("http://localhost:8080/round");
@@ -152,7 +156,7 @@ public class PlayGame {
         CloseableHttpResponse addedRoundResponse = httpClient.execute(addRoundRequest);
 
         if (addedRoundResponse.getStatusLine().getStatusCode() != 200) {
-            System.out.println("Round is not added! Status code: " + addedRoundResponse.getStatusLine().getStatusCode() + " - " + addedRoundResponse.getStatusLine().getReasonPhrase());
+            System.out.println("Team is not added! Status code: " + addedRoundResponse.getStatusLine().getStatusCode() + " - " + addedRoundResponse.getStatusLine().getReasonPhrase());
         }
         HttpEntity responseEntity = addedRoundResponse.getEntity();
         roundList = mapper.readValue(EntityUtils.toString(responseEntity)
@@ -162,7 +166,9 @@ public class PlayGame {
         setRound();
     }
 
-    private static void setRound() throws IOException {
+    private static void setRound() throws IOException, URISyntaxException {
+
+//        System.out.println("roundList: " + roundList);
 
         for (int i = 0; i < roundList.size(); i++) {
 
@@ -172,17 +178,49 @@ public class PlayGame {
 
             chooseCategory();
             updateGame();
+            updateCurrentRound(i + 1);
+            playTheGame();
         }
     }
 
-    public static void chooseCategory() throws IOException {
+    public static void updateCurrentRound(int currentRound) throws IOException, URISyntaxException {
+
+//        game.setGameId(2);
+
+        URIBuilder builder = new URIBuilder("http://localhost:8080/game/" + game.getGameId());
+
+        if (game.getCurrentRound() != currentRound) {
+            System.out.println("updatingGame currentRound: currentRound = " + currentRound);
+            builder.setParameter("currentRound", Integer.toString(currentRound));
+        }
+
+        HttpPut updateGameRequest = new HttpPut(builder.build());
+        StringEntity updateGameEntity = new StringEntity(mapper.writeValueAsString(updateGameRequest), ContentType.APPLICATION_JSON);
+        updateGameRequest.setEntity(updateGameEntity);
+
+        System.out.println(updateGameRequest.toString());
+
+        CloseableHttpResponse updateGameResponse = httpClient.execute(updateGameRequest);
+
+        if (updateGameResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("Current round in game is not updated! Status code: " + updateGameResponse.getStatusLine().getStatusCode() + " - " + updateGameResponse.getStatusLine().getReasonPhrase());
+        }
+
+        HttpEntity responseEntity = updateGameResponse.getEntity();
+        game = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
+        });
+
+//        System.out.println("Game: " + game.toString());
+    }
+
+    public static void chooseCategory() throws IOException, URISyntaxException {
         HttpGet getCategoriesRequest = new HttpGet("http://localhost:8080/category");
 
         CloseableHttpResponse getCategoriesResponse = httpClient.execute(getCategoriesRequest);
         HttpEntity getCategoriesEntity = getCategoriesResponse.getEntity();
 
         if (getCategoriesResponse.getStatusLine().getStatusCode() != 200) {
-            System.out.println("Round is not added! Status code: " + getCategoriesResponse.getStatusLine().getStatusCode() + " - " + getCategoriesResponse.getStatusLine().getReasonPhrase());
+            System.out.println("Cannot get categories! Status code: " + getCategoriesResponse.getStatusLine().getStatusCode() + " - " + getCategoriesResponse.getStatusLine().getReasonPhrase());
         }
 
         List<String> categories = mapper.readValue(EntityUtils.toString(getCategoriesEntity), new TypeReference<>() {
@@ -228,25 +266,227 @@ public class PlayGame {
         } else {
             wordIdList.add(word.getWordId());
         }
+
 //        System.out.println("word: " + word);
 //        System.out.println("wordIdList: " + wordIdList);
     }
 
-    private static void getRamdomWord(String categoryName) throws IOException {
+
+    private static void getRamdomWord(String categoryName) throws IOException, URISyntaxException {
         HttpGet getRandomWordRequest = new HttpGet("http://localhost:8080/randWord/" + categoryName);
 
         CloseableHttpResponse getRandomWordReqponse = httpClient.execute(getRandomWordRequest);
         HttpEntity getRandomWordEntity = getRandomWordReqponse.getEntity();
 
         if (getRandomWordReqponse.getStatusLine().getStatusCode() != 200) {
-            System.out.println("Round is not added! Status code: " + getRandomWordReqponse.getStatusLine().getStatusCode() + " - " + getRandomWordReqponse.getStatusLine().getReasonPhrase());
+            System.out.println("Cannot get random word! Status code: " + getRandomWordReqponse.getStatusLine().getStatusCode() + " - " + getRandomWordReqponse.getStatusLine().getReasonPhrase());
         }
 
         word = mapper.readValue(EntityUtils.toString(getRandomWordEntity), new TypeReference<Word>() {
         });
+
+        updateWordInGame();
     }
 
-    private static void updateGame() {
+    public static void updateWordInGame() throws URISyntaxException, IOException {
 
+//        game.setGameId(2);
+//        word.setWordId(1);
+
+        URIBuilder builder = new URIBuilder("http://localhost:8080/game/" + game.getGameId());
+
+        if (game.getWord() == null || (word.getWordId() != game.getWord().getWordId())) {
+            System.out.println("updatingGame Word: wordId = " + word.getWordId());
+            builder.setParameter("wordId", Integer.toString(word.getWordId()));
+        }
+
+        HttpPut updateGameRequest = new HttpPut(builder.build());
+        StringEntity updateGameEntity = new StringEntity(mapper.writeValueAsString(updateGameRequest), ContentType.APPLICATION_JSON);
+        updateGameRequest.setEntity(updateGameEntity);
+
+        System.out.println(updateGameRequest.toString());
+
+        CloseableHttpResponse updateGameResponse = httpClient.execute(updateGameRequest);
+
+        if (updateGameResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("Word in game is not updated! Status code: " + updateGameResponse.getStatusLine().getStatusCode() + " - " + updateGameResponse.getStatusLine().getReasonPhrase());
+        }
+
+        HttpEntity responseEntity = updateGameResponse.getEntity();
+        game = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
+        });
+
+//        System.out.println("Game: " + game.toString());
+    }
+
+    public static void updateGame() throws URISyntaxException, IOException {
+
+//        game.setGameId(1);
+//        round.setRoundId(4);
+//        game.setRoundId(3);
+
+        URIBuilder builder = new URIBuilder("http://localhost:8080/game/" + game.getGameId());
+
+        if (round.getRoundId() != game.getRoundId()) {
+            System.out.println("updatingGame Round: roundId = " + round.getRoundId() + " gameId = " + game.getRoundId());
+            builder.setParameter("roundId", Integer.toString(round.getRoundId()));
+        }
+
+        if (game.getGameStatus() == null) {
+            System.out.println("updating game status");
+            builder.addParameter("gameStatus", "in progress");
+        }
+
+        if (round.getTeamId() != game.getCurrentTeamTurn()) {
+            System.out.println("updatingGame currentTeamTurn: roundTeamId = " + round.getTeamId() + " game.currentTeamTurn = " + game.getCurrentTeamTurn());
+            builder.addParameter("currentTeamTurn", Integer.toString(round.getTeamId()));
+        }
+
+        HttpPut updateGameRequest = new HttpPut(builder.build());
+        StringEntity updateGameEntity = new StringEntity(mapper.writeValueAsString(updateGameRequest), ContentType.APPLICATION_JSON);
+        updateGameRequest.setEntity(updateGameEntity);
+
+//        System.out.println(updateGameRequest.toString());
+
+        CloseableHttpResponse updateGameResponse = httpClient.execute(updateGameRequest);
+
+        if (updateGameResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("Game is not updated! Status code: " + updateGameResponse.getStatusLine().getStatusCode() + " - " + updateGameResponse.getStatusLine().getReasonPhrase());
+        }
+
+        HttpEntity responseEntity = updateGameResponse.getEntity();
+        game = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
+        });
+
+//        System.out.println("Game: " + game.toString());
+    }
+
+    public static void playTheGame() {
+
+        setWordToGuess();
+
+        while (true) {
+            spinTheWheel();
+            guessChar();
+        }
+
+    }
+
+    private static void guessChar() {
+
+        System.out.print("Guess a character: ");
+        String guessedInput = scan.nextLine().trim().toUpperCase();
+        char charGuessed = guessedInput.charAt(0);
+
+        if (charMap.containsKey(charGuessed)) {
+
+            List<Integer> charguessedList = charMap.get(charGuessed);
+            int blankChar = 0;
+
+            for (int i = 0; i < wordToGuess.length(); i++) {
+
+                if (wordToGuess.charAt(i) == '_') {
+                    blankChar += 1;
+
+                    if (charguessedList.contains(blankChar)) {
+                        wordToGuess.setCharAt(blankChar, charGuessed);
+                    }
+                }
+            }
+
+        } else {
+            // change team
+            System.out.println("WRONG!!!");
+        }
+
+        System.out.println(wordToGuess);
+
+    }
+
+    public static void setWordToGuess() {
+
+        List<Character> symbolsNoSpaceAfter = new ArrayList<>();
+        symbolsNoSpaceAfter.add('\'');
+        symbolsNoSpaceAfter.add('-');
+
+        List<Character> symbolsWithSpaceAfter = new ArrayList<>();
+        symbolsWithSpaceAfter.add('!');
+        symbolsWithSpaceAfter.add('%');
+        symbolsWithSpaceAfter.add('&');
+        symbolsWithSpaceAfter.add(':');
+        symbolsWithSpaceAfter.add(';');
+        symbolsWithSpaceAfter.add('$');
+
+        String w = "It's fun to 'code!";
+        word.setWord(w.toUpperCase());
+        String wordToSensor = word.getWord();
+
+//        game.getWord().setWord(w.toUpperCase());
+//        String wordToSensor = game.getWord().getWord();
+
+        for (int i = 0; i < wordToSensor.length(); i++) {
+
+            char currentChar = wordToSensor.charAt(i);
+
+            if (!symbolsNoSpaceAfter.contains(currentChar) && !symbolsWithSpaceAfter.contains(currentChar) && currentChar != ' ') {
+                if (!charMap.containsKey(currentChar)) {
+                    charMap.put(currentChar, new ArrayList<>()); // instantiate arrayList at the first char
+                    charMap.get(currentChar).add(i); // add the first index to the value of map
+                } else {
+                    charMap.get(currentChar).add(i);
+                }
+
+            } else if (currentChar == '\'' && (i + 1) < wordToSensor.length()) { // add character after ' because it will get skip
+                char nextChar = wordToSensor.charAt(i+1);
+
+                if (!charMap.containsKey(nextChar)) {
+                    charMap.put(nextChar, new ArrayList<>()); // instantiate arrayList at the first char
+                    charMap.get(nextChar).add(i+1); // add the first index to the value of map
+                } else {
+                    charMap.get(nextChar).add(i+1);
+                }
+            }
+
+            if (symbolsWithSpaceAfter.contains(currentChar)) { // if symbols allows space after
+                wordToGuess.append(currentChar);
+            } else if (symbolsNoSpaceAfter.contains(currentChar)) { // if symbols dont allows space after if next char is an alphabet
+                wordToGuess.append(currentChar);
+
+                // if char after ' or - is an alphabet and if i < wordToSensor length, add space after
+                if ((i + 1) < wordToSensor.length() && wordToSensor.charAt(i + 1) >= 'A' && wordToSensor.charAt(i + 1) <= 'Z') {
+                    wordToGuess.append("_");
+                    i++;
+                }
+            } else if (i == 0) {
+                wordToGuess.append("_");
+            } else if (wordToSensor.charAt(i) == ' ') {
+                wordToGuess.append("  ");
+            } else {
+                wordToGuess.append(" _");
+            }
+        }
+
+        System.out.println(charMap.toString());
+
+        System.out.println(wordToGuess);
+    }
+
+    private static void spinTheWheel() {
+        // spin the wheel
+        System.out.print("Spin the Wheel and enter amount here: ");
+//        System.out.println("Amount: ");
+
+        int spinScore;
+
+        while (true) {
+            try {
+                spinScore = Integer.parseInt(scan.nextLine());
+                round.setSpinScore(spinScore);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.print("Amount must be a whole number.");
+                System.out.print("Amount: ");
+            }
+        }
     }
 }

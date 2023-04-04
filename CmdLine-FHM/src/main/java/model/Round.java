@@ -15,7 +15,6 @@ public class Round {
     public Round() {
     }
 
-
     public Round(int roundId, int teamId, int gameId, int roundScore, int spinScore, boolean spinToken) {
         this.roundId = roundId;
         this.teamId = teamId;
