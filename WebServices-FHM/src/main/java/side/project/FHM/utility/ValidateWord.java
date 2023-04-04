@@ -52,12 +52,12 @@ public class ValidateWord {
             wordCharErrorBoolean = true;
         }
 
-        if (!word.matches("^[-\\sA-Z$;:'!%&]+$")) {
+        if (!word.matches("^[-\\sA-Z$,;:'!%&]+$")) {
             if (wordCharErrorBoolean) {
-                wordCharErrorString.append(", but words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, and '. If words contain numbers, please spell them out");
+                wordCharErrorString.append(", but words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, ', and ,. If words contain numbers, please spell them out");
                 wordCharErrorBoolean = true;
             } else {
-                wordCharErrorString.append("Words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, and '. If words contain numbers, please spell them out");
+                wordCharErrorString.append("Words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, ', and ,. If words contain numbers, please spell them out");
                 wordCharErrorBoolean = true;
             }
         }
