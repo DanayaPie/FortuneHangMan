@@ -1,17 +1,28 @@
 import './App.css';
-import StartButton from './Components/StartButton';
-import NewGame from './Components/Forms/NewGame';
+import { createBrowserRouter,RouterProvider} from 'react-router-dom';
+import HomePage from './Pages/HomePage';
+import GetStartedPage from './Pages/GetStartedPage';
+import NewGamePage from './Pages/NewGamePage';
+import GamePage from './Pages/GamePage';
+import Root from './Pages/Root';
+
+const router = createBrowserRouter([
+  {
+    path:'/',
+    element:<Root/>,
+    children:[  
+      {path:'/',element:<HomePage/>},
+    {path:'/getStarted',element:<GetStartedPage/>},
+    {path:'/newGame',element:<NewGamePage/>},
+    {path:'/game',element:<GamePage/>}
+  ]
+  },
+
+
+]);
 
 function App() {
-  const startText = "Start"
-  const iterator = {value: 0};
-  return (
-    <div className='App'>
-      Welcome to Fortune Hangman!
-      <StartButton text={startText} iterator={iterator}></StartButton>
-      <NewGame></NewGame>
-    </div>
-  );
+  return ( <RouterProvider router={router}  />);
 }
 
 export default App;
