@@ -50,10 +50,12 @@ public class PlayGame {
 
     public static void addNewGame() throws IOException, URISyntaxException {
 
+        System.out.println();
         System.out.print("Game Name: ");
         String gameName = scan.nextLine();
         game.setGameName(gameName);
 
+        System.out.println();
         System.out.print("Total Number of Team: ");
         int totalTeam;
 
@@ -182,6 +184,7 @@ public class PlayGame {
 
         for (int i = 0; i < roundList.size(); i++) {
 
+            System.out.println();
             System.out.println("-----");
             System.out.println("Round " + (i + 1) + " begin!!!");
             System.out.println("-----");
@@ -201,13 +204,59 @@ public class PlayGame {
             team.setGameId(teamList.get(i).getGameId());
             team.setTotalScore(teamList.get(i).getTotalScore());
 
+            System.out.println();
             System.out.println("Team " + team.getTeamName() + " turn.");
-            System.out.println("Your information: " + team);
+            printTeamInformation();
 
             chooseCategory();
             updateGameDB();
             updateCurrentRoundInGameDB(i + 1);
             playTheGame(teamCounter);
+            updateRoundInDB();
+            updateTeamInDB();
+        }
+
+        System.out.println("");
+        System.out.println("GAME OVER!");
+        System.out.println("Let see who is the winner...");
+
+        getTeamsByGameId();
+
+        checkHighestScore();
+
+
+        System.out.println();
+        System.out.println("The winner is.... ");
+    }
+
+    private static void checkHighestScore() {
+
+
+        for (Team team : teamList) {
+
+            System.out.println();
+            System.out.println(team.getTeamName() + " have " + team.getTotalScore() + " points.");
+        }
+
+    }
+
+    public static void getTeamsByGameId() throws IOException {
+
+        game.setGameId(25);
+        HttpGet getTeamsByGameIdRequest = new HttpGet("http://localhost:8080/team/game/" + game.getGameId());
+
+        CloseableHttpResponse getTeamByGameIdResponse = httpClient.execute(getTeamsByGameIdRequest);
+        HttpEntity responseEntity = getTeamByGameIdResponse.getEntity();
+
+        if (getTeamByGameIdResponse.getStatusLine().getStatusCode() != 200) {
+            System.out.println("Current round in game is not updated! Status code: " + getTeamByGameIdResponse.getStatusLine().getStatusCode() + " - " + getTeamByGameIdResponse.getStatusLine().getReasonPhrase());
+        }
+
+        teamList = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<List<Team>>() {
+        });
+
+        for (Team team : teamList) {
+            System.out.println(team.toString());
         }
     }
 
@@ -461,7 +510,7 @@ public class PlayGame {
         //System.out.println("Team: " + team.toString());
     }
 
-    public static void updateRoundDB() throws URISyntaxException, IOException {
+    public static void updateRoundInDB() throws URISyntaxException, IOException {
 
 //        round.setRoundId(31);
 //        round.setSpinToken(true);
@@ -515,13 +564,15 @@ public class PlayGame {
 
     public static void playTheGame(int teamCounter) throws URISyntaxException, IOException {
 
-//        game.setGameId(22);
+        game.setGameId(22);
 
-//        String w = "ab";
-//        word.setWord(w.toUpperCase());
+        String w = "Banana";
+        word.setWord(w.toUpperCase());
         setWordToGuess();
 
         while (true) {
+
+            spinTheWheel(); // spin the wheel
 
             System.out.println();
             System.out.println(wordToGuess);
@@ -530,16 +581,15 @@ public class PlayGame {
             String guessedInput = scan.nextLine().trim().toUpperCase();
             char charGuessed = guessedInput.charAt(0);
 
-//            spinTheWheel();
             guessChar(charGuessed, teamCounter);
 
 //            System.out.println("controlWord: " + controlWord);
 //            System.out.println("wordToGuess: " + wordToGuess);
             if (controlWord.compareTo(wordToGuess) == 0) {
 
-                System.out.println(wordToGuess);
+                System.out.println();
                 System.out.println("*****");
-                System.out.println("WIN");
+                System.out.println("You finish the word!!!");
                 System.out.println("*****");
                 break;
             }
@@ -549,11 +599,61 @@ public class PlayGame {
 
     private static void guessChar(char charGuessed, int teamCounter) throws URISyntaxException, IOException {
 
-        updateCharGuessedInGame(charGuessed);
+        if (vowels.contains(charGuessed)){
+
+            System.out.println("A vowel cost 250 point.");
+
+            if (round.getRoundScore() < 250) {
+
+                System.out.println();
+                System.out.println("uhh...");
+                System.out.println("Looks like you do not have enough point to buy a vowel.");
+                System.out.println("Please guess another character.");
+
+                System.out.println();
+                System.out.println(wordToGuess);
+
+                System.out.print("Guess a character: ");
+                String guessedInput = scan.nextLine().trim().toUpperCase();
+                char newCharGuessed = guessedInput.charAt(0);
+
+                guessChar(newCharGuessed, teamCounter);
+            }
+
+            round.setRoundScore(round.getRoundScore() - 250);
+        }
+
+        updateCharGuessedInGame(charGuessed); // update character guessed in db
+
         if (charGuessedSet.contains(charGuessed)) { // if char guessed already in the set
 
-            System.out.println(charGuessed + " is already guessed. Next team turn to guess.");
-            nextTeamFunction(teamCounter); // switch to next team
+            if (round.isSpinToken() == true) {
+
+                System.out.println();
+                System.out.println(charGuessed + " is already guessed....");
+                System.out.println("But you have a token! You can continue guessing.");
+
+                round.setSpinToken(false);
+                updateRoundInDB();
+
+                spinTheWheel(); // spin the wheel
+
+                System.out.println();
+                System.out.println(wordToGuess);
+
+                System.out.print("Guess a character: ");
+                String guessedInput = scan.nextLine().trim().toUpperCase();
+                char newCharGuessed = guessedInput.charAt(0);
+
+                guessChar(newCharGuessed, teamCounter);
+
+            } else {
+
+                System.out.println();
+                System.out.println(charGuessed + " is already guessed. Next team turn to guess.");
+                nextTeamFunction(teamCounter); // switch to next team
+            }
+
         } else {
 
             charGuessedSet.add(charGuessed);
@@ -561,26 +661,66 @@ public class PlayGame {
             if (charInWordMap.containsKey(charGuessed)) {
 
                 List<Integer> charGuessedList = charInWordMap.get(charGuessed);
+                int charNumber = charGuessedList.size();
+                int scoreWon = charNumber * round.getSpinScore();
 
                 for (int i = 0; i < charGuessedList.size(); i++) {
 
                     wordToGuess.setCharAt(charGuessedList.get(i), charGuessed);
                 }
 
+                round.setRoundScore(scoreWon);
+                team.setTotalScore(team.getTotalScore() + round.getRoundScore());
+                updateTeamInDB();
+
+                System.out.println();
+                System.out.println(wordToGuess);
+                System.out.println("Team Score: " + team.getTotalScore());
+
             } else {
-                // change team
-                System.out.println("You guessed wrong! Next team turn to guess.");
-                nextTeamFunction(teamCounter); // switch to next team
+
+                if (round.isSpinToken() == true) {
+
+                    System.out.println();
+                    System.out.println("You guessed wrong...");
+                    System.out.println("But you have a token! You can continue guessing.");
+
+                    round.setSpinToken(false);
+                    updateRoundInDB();
+
+                    spinTheWheel(); // spin the wheel
+
+                    System.out.println();
+                    System.out.println(wordToGuess);
+
+                    System.out.print("Guess a character: ");
+                    String guessedInput = scan.nextLine().trim().toUpperCase();
+                    char newCharGuessed = guessedInput.charAt(0);
+
+                    guessChar(newCharGuessed, teamCounter);
+
+                } else {
+                    // change team
+                    System.out.println();
+                    System.out.println("You guessed wrong! Next team turn to guess.");
+                    nextTeamFunction(teamCounter); // switch to next team
+                }
             }
 
 //        System.out.println(wordToGuess);
         }
     }
 
+    private static void printTeamInformation() {
+        System.out.println("-----");
+        System.out.println("Team Name: " + team.getTeamName());
+        System.out.println("Team Score: " + team.getTotalScore());
+        System.out.println("-----");
+    }
+
     private static void nextTeamFunction(int teamCounter) throws URISyntaxException, IOException {
 
-        System.out.println("Your team information: " + team.toString());
-        System.out.println("-----");
+        printTeamInformation();
 
 //        System.out.println("teamList.size(): " + teamList.size());
         if (teamCounter + 1 < teamList.size()) {
@@ -593,12 +733,12 @@ public class PlayGame {
         }
 
         updateTeamInDB(); // update current team total score in DB
-        updateRoundDB(); // update current round with current team in DB
+        updateRoundInDB(); // update current round with current team in DB
 
         // change team instance to next team by getting next team info from db
 //        System.out.println("teamCounter: " + teamCounter);
         getTeamByTeamId(teamList.get(teamCounter).getTeamId());
-        System.out.println("Next team information: " + team.toString());
+        printTeamInformation();
 
         getRoundByRoundIdTeamId(); // get round by round id and team id info from db
         // change round instance to using the round get from db
@@ -691,21 +831,46 @@ public class PlayGame {
 //        System.out.println(wordToGuess.length() - 1);
     }
 
-    private static void spinTheWheel() {
-        // spin the wheel
-        System.out.print("Spin the Wheel and enter amount here: ");
-//        System.out.println("Amount: ");
+    public static void spinTheWheel() throws IOException {
+
+        round.setRoundId(79);
+        team.setTeamId(74);
+        getRoundByRoundIdTeamId();
 
         int spinScore;
 
         while (true) {
             try {
-                spinScore = Integer.parseInt(scan.nextLine());
-                round.setSpinScore(spinScore);
-                break;
+
+                // spin the wheel
+                System.out.println();
+                System.out.println("Spin the wheel.");
+                System.out.print("Let us know what you get: ");
+
+                String spinWheel = scan.nextLine();
+
+//                System.out.println("spinWheel: " + spinWheel.toUpperCase().trim());
+
+                if (spinWheel.toUpperCase().trim().equals("TOKEN")) {
+                    round.setSpinToken(true);
+
+                    System.out.println();
+                    System.out.println("You got a token! Congratulation!");
+                    System.out.println("This token will be used when you guess wrong or you guess a character that has already been guessed.");
+                    break;
+
+                } else {
+
+                    spinScore = Integer.parseInt(spinWheel);
+                    round.setSpinScore(spinScore);
+                    break;
+                }
             } catch (NumberFormatException e) {
-                System.out.print("Amount must be a whole number.");
-                System.out.print("Amount: ");
+
+                System.out.println();
+                System.out.println("uhh...");
+                System.out.println("Enter the amount as a whole number, unless it is a 'token'.");
+                System.out.println("Lets try again: ");
             }
         }
     }

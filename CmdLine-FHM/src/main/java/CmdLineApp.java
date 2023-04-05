@@ -16,7 +16,8 @@ public class CmdLineApp {
         System.out.println("|  Welcome to Fortune Hang Man!  |");
         System.out.println(" ================================");
 
-        PlayGame.addNewGame();
+
+//        PlayGame.addNewGame();
 //        PlayGame.addTeam();
 
 //        List<Integer> teamIds = new ArrayList() {{
@@ -25,7 +26,7 @@ public class CmdLineApp {
 //        }};
 //        PlayGame.addRound(teamIds);
 
-//        PlayGame.setRound();
+        PlayGame.setRound();
 //        PlayGame.chooseCategory();
 //        PlayGame.updateGameDB();
 //        PlayGame.updateWordInGameDB();
@@ -35,6 +36,9 @@ public class CmdLineApp {
 //        PlayGame.playTheGame(0);
 //        PlayGame.updateRoundDB();
 //        PlayGame.getRoundByRoundIdTeamId();
+//        PlayGame.spinTheWheel();
+//        PlayGame.getTeamsByGameId();
+
 
         /*
         GetRequests.getAllWordsRequest();
