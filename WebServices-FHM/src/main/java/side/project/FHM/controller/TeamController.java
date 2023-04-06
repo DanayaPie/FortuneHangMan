@@ -13,6 +13,7 @@ import side.project.FHM.service.TeamService;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
 @RestController
 public class TeamController {
 
@@ -20,6 +21,7 @@ public class TeamController {
 
     @Autowired
     private TeamService teamService;
+
 
     @GetMapping(path = "/team")
     public ResponseEntity<Object> getAllTeams() {

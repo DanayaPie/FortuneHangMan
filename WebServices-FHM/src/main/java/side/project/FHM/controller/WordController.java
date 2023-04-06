@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
 @RestController
 public class WordController implements InitializingBean {
 
@@ -24,6 +25,7 @@ public class WordController implements InitializingBean {
 
     @Autowired
     private WordService wordService;
+
 
     @GetMapping(path = "/word")
     public ResponseEntity<Object> getAllWords() {
