@@ -9,7 +9,6 @@ import side.project.FHM.dao.RoundDao;
 import side.project.FHM.exception.InvalidParameterException;
 import side.project.FHM.exception.RoundDoesNotExist;
 import side.project.FHM.exception.TeamDoesNotExist;
-import side.project.FHM.model.Game;
 import side.project.FHM.model.Round;
 import side.project.FHM.model.RoundId;
 import side.project.FHM.utility.ValidateRound;
@@ -57,7 +56,6 @@ public class RoundService {
         int spinScore = 0;
         List<Round> listRoundAdded = new ArrayList<>();
 
-        Game game = gameService.getGameByGameId(gameId);
 
         for (Integer teamId : teamIds) {
             teamService.getTeamByTeamId(teamId); // check if team exist
@@ -65,7 +63,7 @@ public class RoundService {
             RoundId roundIdToAdd = new RoundId();
             roundIdToAdd.setRoundId(roundId);
             roundIdToAdd.setTeamId(teamId);
-            roundIdToAdd.setGame(game);
+            roundIdToAdd.setGame(gameId);
 
             Round roundToAdd = new Round();
             roundToAdd.setRoundId(roundIdToAdd);
@@ -120,13 +118,13 @@ public class RoundService {
     public List<Round> getRoundsByRoundIdGameId(long roundId, int gameId) throws InvalidParameterException {
         logger.info("RoundService.getRoundsByRoundIdGameId() invoked");
 
-        List<Round> roudsToGet = roundDao.getRoundsByRoundIdGameId(roundId, gameId);
+        List<Round> roundsToGet = roundDao.getRoundsByRoundIdGameId(roundId, gameId);
 
         try {
-            if (roudsToGet.isEmpty()) {
+            if (roundsToGet.isEmpty()) {
                 throw new InvalidParameterException("No round with the round ID of " + roundId + " and game ID of " + gameId);
             }
-            return roudsToGet;
+            return roundsToGet;
         } catch (DataAccessException | InvalidParameterException e) {
             throw new InvalidParameterException("No round with the round ID of " + roundId + " and game ID of " + gameId);
         }

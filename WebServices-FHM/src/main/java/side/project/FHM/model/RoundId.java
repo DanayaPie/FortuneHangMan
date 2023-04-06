@@ -2,8 +2,6 @@ package side.project.FHM.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,14 +15,13 @@ public class RoundId implements Serializable {
     @Column(name = "team_id", insertable = false, updatable = false)
     private int teamId;
 
-    @ManyToOne
-    @JoinColumn(name = "game_id", insertable = false, updatable = false)
-    private Game game;
+    @Column(name = "game_id", insertable = false, updatable = false)
+    private int game;
 
     public RoundId() {
     }
 
-    public RoundId(long roundId, int teamId, Game game) {
+    public RoundId(long roundId, int teamId, int game) {
         this.roundId = roundId;
         this.teamId = teamId;
         this.game = game;
@@ -46,11 +43,11 @@ public class RoundId implements Serializable {
         this.teamId = teamId;
     }
 
-    public Game getGame() {
+    public int getGame() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setGame(int game) {
         this.game = game;
     }
 
@@ -59,7 +56,7 @@ public class RoundId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof RoundId)) return false;
         RoundId roundId1 = (RoundId) o;
-        return roundId == roundId1.roundId && teamId == roundId1.teamId && Objects.equals(game, roundId1.game);
+        return roundId == roundId1.roundId && teamId == roundId1.teamId && game == roundId1.game;
     }
 
     @Override
