@@ -7,8 +7,9 @@
 .box {
     display: flex;
     flex-direction: column;
-    min-height: 90vh;
-    min-width: 95vw;
+    height: 90vh;
+    width: 95vw;
+    padding: 2vh 1vw;
     justify-content: center;
     background-color: lightblue;
 }
@@ -25,7 +26,7 @@
 }
 
 .teamBox .team{
-    border: 1px dotted grey;
+    border: 1px solid grey;
 }
 
 .hangmanBox{
@@ -63,4 +64,20 @@
     height: 5vw;
     width: 5vw;
     caret-color: transparent;
+}
+
+.currentTurn{
+    box-shadow:
+    .1vw .1vw 1vw .5vw red,  /* inner white */
+    0 0 .1vw .1vw white; 
+    /* 0 0 140px 90px #0ff; outer cyan */
+}
+
+.optionsBox {
+    display: flex;
+    flex-direction: row;
+    margin-top: auto;
+    margin-bottom: 1vh;
+    justify-content: space-around;
+
 }

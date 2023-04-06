@@ -12,10 +12,11 @@ function TeamBox(props) {
                     key={team.teamId}
                     teamName={team.teamName}
                     roundScore={props.roundScores.find((round) => round.teamId === team.teamId)}
+                    teamTurn={team.teamTurn}
+                    currentTeamTurn={props.currentTeamTurn}
                 />
             ))}
         </div>
-
     );
 }
 
