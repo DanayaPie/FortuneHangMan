@@ -31,14 +31,14 @@ function GamePage() {
                 gameId: gameData.gameId,
                 gameName: gameData.gameName,
                 roundId: gameData.roundId,
-                wordId: gameData.word.wordId,
-                word: gameData.word.word,
+                word: gameData.word,
                 gameStatus: gameData.gameStatus,
-                letterGuessed: {gameData.letterGuessed === null? "":gameData.letterGuessed},
+                letterGuessed: gameData.letterGuessed,
                 totalTeam: gameData.totalTeam,
                 currentTeamTurn: gameData.currentTeamTurn,
                 currentRound: gameData.currentRound
             }
+            if(mappedGame.letterGuessed === null) mappedGame.letterGuessed = "";
             console.log(mappedGame);
             setGame({ ...mappedGame });
             setIsGameLoading(false);
@@ -192,12 +192,11 @@ function GamePage() {
 
     return (
         <div className='App'>
-            {isGameLoading !== true && isTeamsLoading !== true && isWordsLoading !== true && game !== undefined && words !== undefined &&
+            {isGameLoading !== true && isTeamsLoading !== true && isWordsLoading !== true && game !== undefined &&
                 <Game
                     game={game}
                     teams={teams}
                     roundScores={roundScores}
-                    words={words}
                     onLetterGuessed={updateLetterGuessedHandler}
                     changeTeamTurn={updateCurrentTeamTurnHandler}
                     onNewRound={{ updateRoundIdHandler, updateCurrentRoundHandler, updateWordIdHandler, updateCurrentTeamTurnHandler }}

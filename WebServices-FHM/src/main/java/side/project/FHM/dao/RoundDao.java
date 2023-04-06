@@ -80,7 +80,7 @@ public class RoundDao {
 
         try {
             List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
-                            + " AND r.roundId.game.gameId = :gameId", Round.class)
+                            + " AND r.roundId.gameId = :gameId", Round.class)
                     .setParameter("roundId", roundId)
                     .setParameter("gameId", gameId)
                     .getResultList();
