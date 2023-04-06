@@ -1,0 +1,83 @@
+.game {
+    background-color: white;
+    border-color: black;
+    color: black;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    width: 95vw;
+    padding: 2vh 1vw;
+    justify-content: center;
+    background-color: lightblue;
+}
+
+.teamBox {
+    display: flex;
+    flex-direction: row;
+    margin-top: auto;
+    margin-bottom: 1vh;
+    /* min-height: 90vh; */
+    /* min-width: 95vw; */
+    justify-content: space-around;
+
+}
+
+.teamBox .team{
+    border: 1px solid grey;
+}
+
+.hangmanBox{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    /* margin-top: auto; */
+    /* margin-bottom: auto; */
+    margin: auto 2vw auto;
+    padding: 10vh 10vw;
+    height: 70vh;
+    background-color: white;
+    column-gap: 3%;
+    align-items: center;
+    justify-content: center;
+
+
+}
+
+.wordWrapper{
+    display: flex;
+    flex-direction: row;
+    column-gap: 1.5%;
+
+}
+
+.letter{
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+    font-size: 1em;
+    text-align: center;
+    text-align: center;
+    line-height: 5vw;
+    height: 5vw;
+    width: 5vw;
+    caret-color: transparent;
+}
+
+.currentTurn{
+    box-shadow:
+    .1vw .1vw 1vw .5vw red,  /* inner white */
+    0 0 .1vw .1vw white; 
+    /* 0 0 140px 90px #0ff; outer cyan */
+}
+
+.optionsBox {
+    display: flex;
+    flex-direction: row;
+    margin-top: auto;
+    margin-bottom: 1vh;
+    justify-content: space-around;
+
+}

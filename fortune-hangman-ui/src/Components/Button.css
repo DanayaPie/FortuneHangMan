@@ -1,3 +1,8 @@
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 .btn-primary{
     background-color: blueviolet;
     border-color: white;
@@ -27,3 +32,5 @@
     border-color: white;
     color: white;
 }
+
+
