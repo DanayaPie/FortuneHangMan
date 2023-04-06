@@ -16,15 +16,15 @@ public class RoundId implements Serializable {
     private int teamId;
 
     @Column(name = "game_id", insertable = false, updatable = false)
-    private int game;
+    private int gameId;
 
     public RoundId() {
     }
 
-    public RoundId(long roundId, int teamId, int game) {
+    public RoundId(long roundId, int teamId, int gameId) {
         this.roundId = roundId;
         this.teamId = teamId;
-        this.game = game;
+        this.gameId = gameId;
     }
 
     public long getRoundId() {
@@ -43,12 +43,12 @@ public class RoundId implements Serializable {
         this.teamId = teamId;
     }
 
-    public int getGame() {
-        return game;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setGame(int game) {
-        this.game = game;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
     @Override
@@ -56,12 +56,12 @@ public class RoundId implements Serializable {
         if (this == o) return true;
         if (!(o instanceof RoundId)) return false;
         RoundId roundId1 = (RoundId) o;
-        return roundId == roundId1.roundId && teamId == roundId1.teamId && game == roundId1.game;
+        return roundId == roundId1.roundId && teamId == roundId1.teamId && gameId == roundId1.gameId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(roundId, teamId, game);
+        return Objects.hash(roundId, teamId, gameId);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RoundId implements Serializable {
         return "RoundId{" +
                 "roundId=" + roundId +
                 ", teamId=" + teamId +
-                ", game=" + game +
+                ", game=" + gameId +
                 '}';
     }
 }

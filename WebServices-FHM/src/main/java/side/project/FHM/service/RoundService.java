@@ -63,7 +63,7 @@ public class RoundService {
             RoundId roundIdToAdd = new RoundId();
             roundIdToAdd.setRoundId(roundId);
             roundIdToAdd.setTeamId(teamId);
-            roundIdToAdd.setGame(gameId);
+            roundIdToAdd.setGameId(gameId);
 
             Round roundToAdd = new Round();
             roundToAdd.setRoundId(roundIdToAdd);
