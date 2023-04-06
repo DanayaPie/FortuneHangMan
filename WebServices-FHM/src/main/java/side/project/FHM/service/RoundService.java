@@ -189,7 +189,7 @@ public class RoundService {
             throw new InvalidParameterException(roundInputsErrorString.toString());
         }
 
-        logger.info("spinToken {}", spinToken);
+        logger.debug("spinToken {}", spinToken);
         // spin token
         if (spinToken != null) {
             logger.info("Updating spin token");
