@@ -7,23 +7,14 @@ import InputOptions from './InputOptions';
 
 function Game(props) {
 
-    const SYMBOL_REGEX = /[-!$%^&*()_+|~=`{}[]:";'<>?,.\\\/]/g;
+    // const SYMBOL_REGEX = /[-!$%^&*()_+|~=`{}[]:";'<>?,.\\\/]/g;
     const SYMBOL_PATTERN = "-!$%^&*()_+|~=`{}:\";'<>?,.\\/";
     const VOWELS = "AEIOU";
     const VOWEL_PRICE = 250;
 
     const [currentLetterGuessed, setCurrentLetterGuessed] = useState('');
     const [currentPuzzleGuessed, setCurrentPuzzleGuessed] = useState('');
-    const [pickedSentence, setPickedSentence] = useState(() => {
-        let pickedWord;
-        props.words.find(word => {
-            if (word.wordId === props.game.wordId) {
-                pickedWord = word.word.toUpperCase().replaceAll(SYMBOL_REGEX, "")
-                return pickedWord
-            } else return null;
-        })
-        return pickedWord;
-    });
+    const [pickedSentence, setPickedSentence] = useState(props.game.word.word);
     const [selectedSpinScore, setSelectedSpinScore] = useState('');
     const [spinScoreSubmitted, setSpinScoreSubmitted] = useState(false);
 
@@ -59,13 +50,13 @@ function Game(props) {
     }
     function submitPuzzleGuessedHandler() {
         if (currentPuzzleGuessed !== '') {
-            let pickedWord = props.words.find(word => word.wordId === props.game.wordId).word.trim().toUpperCase();
-            if(currentPuzzleGuessed.toUpperCase() === pickedWord){
+            let pickedWord = props.game.word.word.toUpperCase();
+            if (currentPuzzleGuessed.toUpperCase() === pickedWord) {
                 let currentTeam = props.teams.find((team) => team.teamTurn === props.game.currentTeamTurn).teamId
                 let teamRoundScore = props.roundScores.find((roundScore) => roundScore.teamId === currentTeam)
-                puzzleGuessedCorrectly(teamRoundScore.spinScore,currentTeam);
+                puzzleGuessedCorrectly(teamRoundScore.spinScore, currentTeam);
                 setCurrentPuzzleGuessed('');
-            }else{
+            } else {
                 console.log("Wrong!");
                 props.changeTeamTurn();
             }
@@ -85,9 +76,10 @@ function Game(props) {
         setSpinScoreSubmitted(false);
     }
 
-    function puzzleGuessedCorrectly(spinScore,currentTeam){
-        Array.from(pickedSentence).forEach( (char) => {
-            pickedSentenceHandler(char,0)
+    //Solving the Puzzle only adds the spin score once
+    function puzzleGuessedCorrectly(spinScore, currentTeam) {
+        Array.from(pickedSentence).forEach((char) => {
+            pickedSentenceHandler(char, 0)
             props.onLetterGuessed(char.toUpperCase());
         });
         props.onRoundScoreUpdate(1 * spinScore, props.game.roundId, currentTeam);
@@ -110,7 +102,7 @@ function Game(props) {
     function handleBadSpin(typeOfBadSpin) {
         if (typeOfBadSpin === "Lose") {
             props.changeTeamTurn();
-        } else if(typeOfBadSpin === "Bankrupt") {
+        } else if (typeOfBadSpin === "Bankrupt") {
             let currentTeam = props.teams.find((team) => team.teamTurn === props.game.currentTeamTurn).teamId
             props.onRoundScoreReset(props.game.roundId, currentTeam);
             props.changeTeamTurn();
@@ -138,22 +130,26 @@ function Game(props) {
 
 
             <Hangman
-                sentence={props.words.find(word => word.wordId === props.game.wordId).word}
-                wordId={props.words.find(word => word.wordId === props.game.wordId).wordId}
+                sentence={props.game.word.word.toUpperCase()}
+                wordId={props.game.word.wordId}
                 showGuessedLetters={showGuessedLetters}
-                onPuzzleGuessChange={currentPuzzleGuessHandler} 
-                onPuzzleGuessSubmit={submitPuzzleGuessedHandler} 
-                puzzleGuessed={currentPuzzleGuessed}
+
             />
 
-            {spinScoreSubmitted ?
-                <InputOptions currentLetterGuessHandler={currentLetterGuessHandler} 
-                submitLetterGuessedHandler={submitLetterGuessedHandler} 
-                currentLetterGuessed={currentLetterGuessed}
-                />
-                :<EnterSpinScore onSelectSpinScoreChange={currentSelectedSpinScoreHandler} onSpinScoreSubmit={submitSelectedSpinScoreHandler} onBadSpin={handleBadSpin}/>
+            {
+                !wordSolved() ?
+                    spinScoreSubmitted ?
+                        <InputOptions currentLetterGuessHandler={currentLetterGuessHandler}
+                            submitLetterGuessedHandler={submitLetterGuessedHandler}
+                            currentLetterGuessed={currentLetterGuessed}
+                            currentPuzzleGuessHandler={currentPuzzleGuessHandler}
+                            submitPuzzleGuessedHandler={submitPuzzleGuessedHandler}
+                            puzzleGuessed={currentPuzzleGuessed}
+                        />
+                        : <EnterSpinScore onSelectSpinScoreChange={currentSelectedSpinScoreHandler} onSpinScoreSubmit={submitSelectedSpinScoreHandler} onBadSpin={handleBadSpin} />
+                    : <div className='btn btn-primary'> Continue </div>
             }
-            {wordSolved() ? "Puzzle Solved" : ""}
+
 
             <TeamBox
                 teams={props.teams}

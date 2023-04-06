@@ -37,9 +37,10 @@
     /* margin-bottom: auto; */
     margin: auto 2vw auto;
     padding: 10vh 10vw;
-    height: 70vh;
+    min-height: 70%;
     background-color: white;
     column-gap: 3%;
+    row-gap: 1.5%;
     align-items: center;
     justify-content: center;
 
@@ -49,7 +50,7 @@
 .wordWrapper{
     display: flex;
     flex-direction: row;
-    column-gap: 1.5%;
+    gap: 1.5%;
 
 }
 
