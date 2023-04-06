@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
 @RestController
 public class RoundController {
 
@@ -99,6 +100,7 @@ public class RoundController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
 
     @PutMapping(path = "/round/{roundId}/{teamId}")
     public ResponseEntity<Object> updateRoundByRoundIdTeamId(@PathVariable(value = "roundId") long roundId

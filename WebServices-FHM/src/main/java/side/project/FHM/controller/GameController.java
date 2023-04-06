@@ -15,6 +15,7 @@ import side.project.FHM.service.GameService;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
 @RestController
 public class GameController {
 
@@ -22,6 +23,7 @@ public class GameController {
 
     @Autowired
     private GameService gameService;
+
 
     @GetMapping(path = "/game")
     public ResponseEntity<Object> getAllGames() {
