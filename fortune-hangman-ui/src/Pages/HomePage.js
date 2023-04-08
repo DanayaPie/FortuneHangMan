@@ -9,7 +9,7 @@ function HomePage() {
   return (
     <div className='App'>
       Welcome to Fortune Hangman!
-      <Button link="/getStarted" text={startText}></Button>
+      <Button link="/game" text={startText}></Button>
     </div>
   );
 }

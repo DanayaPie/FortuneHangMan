@@ -69,7 +69,7 @@ public class TeamDao {
         logger.info("TeamDao.getTeamsByGameId() invoked");
 
         try {
-            List<Team> teamsToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId", Team.class)
+            List<Team> teamsToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId ORDER BY t.teamTurn", Team.class)
                     .setParameter("gameId", gameId)
                     .getResultList();
             return teamsToGet;

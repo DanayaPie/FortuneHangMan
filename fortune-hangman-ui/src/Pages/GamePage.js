@@ -17,17 +17,22 @@ function GamePage() {
     const [error, setError] = useState(false);
     const SYMBOL_REGEX = /[-!$%^&*()_+|~=`{}[]:";'<>?,.\/]/g;
     const [isWordSolved, setIsWordSolved] = useState();
+    const [wordAlreadyUsed, setWordsAlreadyUsed] = useState(new Set());
     //TODO dynamically set this later
     const gameId = 1;
 
     useEffect(() => {
-        const timeOut = setTimeout(() => {
-            if (game === null || game === undefined) {
+        console.info(`Initializing Game with gamedId:[${gameId}]`);
+            if (gameId !== null || game === null || game === undefined) {
                 fetchTeamDataByGameId(gameId, fetchGameDataByGameId);
                 fetchCategoryData();
-            } else {
+            } 
+    },[]);
+
+    useEffect(() => {
+        const timeOut = setTimeout(() => {
                 if (game.word !== null) {
-                    console.log("Updating Game");
+                    console.info(`Updating Game Record with GameId:[${gameId}]`);
                     updateGameTable(game);
                 }
                 if (teams !== null || teams !== undefined) {
@@ -36,12 +41,12 @@ function GamePage() {
                 if (roundScores !== null || roundScores !== undefined) {
                     updateRoundTable(roundScores);
                 }
-            }
+            // }
         }, 600);
         return () => {
             clearTimeout(timeOut);
         }
-    }, [gameId, game, teams, roundScores]);
+    }, [game, teams, roundScores]);
 
     async function fetchGameDataByGameId(gameId, teams) {
         setIsGameLoading(true);
@@ -74,7 +79,7 @@ function GamePage() {
             setIsGameLoading(false);
         }
         catch (error) {
-            console.log(error);
+            console.error(error);
             setError(true);
         }
     }
@@ -114,13 +119,18 @@ function GamePage() {
             word: wordData.word,
             category: wordData.category
         }
-        setWords([...words], mappedWord);
-        setGame((prevState) => {
-            return { ...prevState, word: mappedWord }
-        });
-        callback(mappedWord.word.replace(SYMBOL_REGEX, ""))
-        console.log(mappedWord.word)
-        setIsWordLoading(false);
+        if(!wordAlreadyUsed.has(mappedWord.wordId)){
+            setWords([...words], mappedWord);
+            setGame((prevState) => {
+                return { ...prevState, word: mappedWord }
+            });
+            callback(mappedWord.word.replace(SYMBOL_REGEX, ""))
+            setWordsAlreadyUsed((prevSet) => new Set(prevSet.add(mappedWord.wordId)))
+            setIsWordLoading(false);
+            console.debug(`Current Phrase being used [${mappedWord.word}]`)
+        }else{
+            fetchRandomWordByCategory(category, callback)
+        }
     }
 
 
@@ -164,7 +174,7 @@ function GamePage() {
     async function updateRoundTable(rounds) {
         for (let i = 0; i < rounds.length; i++) {
             let round = rounds[i];
-            const roundResponse = await fetch(`http://localhost:8080/round/${round.roundId}/${round.teamId}?${new URLSearchParams({
+            await fetch(`http://localhost:8080/round/${round.roundId}/${round.teamId}?${new URLSearchParams({
                 spinScore: round.spinScore,
                 roundScore: round.roundScore,
                 // spinToken:  false
@@ -174,13 +184,10 @@ function GamePage() {
                     "Content-type": "application/json;"
                 }
             });
-            const responseJson = await roundResponse.json();
-            console.log(responseJson);
         }
     }
 
     async function updateTeamTable(teams) {
-        console.log(teams);
         for (let i = 0; i < teams.length; i++) {
             let team = teams[i];
             await fetch(`http://localhost:8080/team/${team.teamId}?${new URLSearchParams({
@@ -222,7 +229,7 @@ function GamePage() {
         })
         setRoundScores([...mappedRounds]);
         setGame((prevState) => {
-            return { ...prevState, roundId: mappedRounds[0].roundId, letterGuessed: "", gameStatus: "In Progress" }
+            return { ...prevState, roundId: mappedRounds[0].roundId, letterGuessed: "", gameStatus: "In Progress",currentTeamTurn: 1}
         });
         setIsRoundsLoading(false);
     }
@@ -252,7 +259,7 @@ function GamePage() {
         })
         setRoundScores([...mappedRounds]);
         setGame((prevState) => {
-            return { ...prevState, roundId: mappedRounds[0].roundId, currentRound: prevState.currentRound + 1, letterGuessed: "", gameStatus: "In Progress" }
+            return { ...prevState, roundId: mappedRounds[0].roundId, currentRound: prevState.currentRound + 1,currentTeamTurn:prevState.currentTeamTurn +1, letterGuessed: "", gameStatus: "In Progress" }
         });
         setIsRoundsLoading(false);
     }
@@ -260,16 +267,13 @@ function GamePage() {
 
 
     //Game Updates ***********************
-    const updateLetterGuessedHandler = (letter, shouldConcat) => {
-        if (shouldConcat) {
-            setGame((prevState) => {
-                if(!prevState.letterGuessed.includes(letter)){
-                    console.log("updating Letter with " + letter)
-                    return { ...prevState, letterGuessed: prevState.letterGuessed.concat(letter) }
-                }
-                return prevState;
-            });
-        }
+    const updateLetterGuessedHandler = (letter) => {
+        setGame((prevState) => {
+            if (!prevState.letterGuessed.includes(letter)) {
+                return { ...prevState, letterGuessed: prevState.letterGuessed.concat(letter) }
+            }
+            return prevState;
+        });
     };
 
     const isWordSolvedHandler = (status) => {
@@ -350,7 +354,7 @@ function GamePage() {
 
 
     const updateTotalScoreHandler = (teamId, roundScore) => {
-        console.log(`Score updating for team ${teamId} with score ${roundScore}`);
+        console.info(`Score updating for team ${teamId} with score ${roundScore}`);
         setTeams((prevTeams) => {
             const updatedTotalScore = prevTeams.map((team) => {
                 if (team.teamId === teamId) {
