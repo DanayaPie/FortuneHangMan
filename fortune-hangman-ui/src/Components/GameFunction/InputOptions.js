@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import GuessLetter from './Forms/GuessLetter';
-import SolveThePuzzle from './Forms/SolveThePuzzle';
+import GuessLetter from '../Forms/GuessLetter';
+import SolveThePuzzle from '../Forms/SolveThePuzzle';
 
 function InputOptions(props) {
     const [guessLetterSelected, setGuessLetterSelected] = useState(false);
@@ -34,7 +34,7 @@ function InputOptions(props) {
                 : ""
             }
             {!guessLetterSelected && solvePuzzleSelected ?
-                <SolveThePuzzle onPuzzleGuessChange={props.currentPuzzleGuessHandler} onPuzzleGuessSubmit={props.submitPuzzleGuessedHandler} puzzleGuessed={props.currentPuzzleGuessed} />
+                <SolveThePuzzle onPuzzleGuessChange={props.currentPuzzleGuessHandler} onPuzzleGuessSubmit={props.submitPuzzleGuessedHandler} currentPuzzleGuessed={props.currentPuzzleGuessed} />
                 : ""
             }
             

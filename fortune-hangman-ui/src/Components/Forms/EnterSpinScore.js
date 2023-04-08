@@ -15,8 +15,8 @@ function EnterSpinScore(props) {
     <form className='' onChange={(e) => props.onSelectSpinScoreChange(e)} onSubmit={(e) => submitHandler(e)}>
       {/* <label htmlFor="spinScore">Select Spin Amount</label> */}
       <br />
-      <select id="spinScore" name="spinScore" >
-        <option value="" selected="selected"disabled hidden>Select Spin Score</option>
+      <select id="spinScore" name="spinScore" defaultValue={"default"}>
+        <option value="default" disabled hidden>Select Spin Score</option>
         <option value="500" >500</option>
         <option value="550">550</option>
         <option value="600">600</option>
