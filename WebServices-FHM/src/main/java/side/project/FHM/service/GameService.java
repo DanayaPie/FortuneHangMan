@@ -221,17 +221,22 @@ public class GameService {
         if (letterGuessed != null) {
             logger.info("Updating letter guessed");
 
-            String letterGuessedStr;
-            StringBuilder letterGuessedStrB = new StringBuilder();
-            String letterAlreadyGuessed = gameToUpdate.getLetterGuessed();
+            /*
+                UPDATE letterGuessed as STRING
+             */
+//            String letterGuessedStr;
+//            StringBuilder letterGuessedStrB = new StringBuilder();
+//            String letterAlreadyGuessed = gameToUpdate.getLetterGuessed();
+//
+//            if (letterAlreadyGuessed != null) {
+//                letterGuessedStrB.append(letterAlreadyGuessed);
+//            }
+//
+//            letterGuessedStrB.append(letterGuessed);
+//            letterGuessedStr = letterGuessedStrB.toString();
+//            gameToUpdate.setLetterGuessed(letterGuessedStr);
 
-            if (letterAlreadyGuessed != null) {
-                letterGuessedStrB.append(letterAlreadyGuessed);
-            }
-
-            letterGuessedStrB.append(letterGuessed);
-            letterGuessedStr = letterGuessedStrB.toString();
-            gameToUpdate.setLetterGuessed(letterGuessedStr);
+            gameToUpdate.setLetterGuessed(letterGuessed);
         }
 
         /*
