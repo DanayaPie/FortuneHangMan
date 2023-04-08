@@ -5,13 +5,11 @@ function TeamCount(props) {
   const [tCount, setTcount] = useState('');
 
   function teamCountChangeHandler(event) {
-    console.log(event.target.value);
     setTcount(event.target.value);
   }
 
   function submitHandler(e) {
     e.preventDefault();
-    console.log(`Team Count ${tCount} created!`)
     setTcount('');
   }
 

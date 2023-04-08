@@ -11,7 +11,7 @@ public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "game_id", insertable = false)
-    private int gameId;
+    private Integer gameId;
 
     @Column(name = "game_name", nullable = false)
     private String gameName;
@@ -21,7 +21,7 @@ public class Game {
 //    private List<Round> round;
 
     @Column(name = "round_id", nullable = true)
-    private int roundId;
+    private Integer roundId;
 
     @OneToOne
     @JoinColumn(name = "word_id", nullable = true)
@@ -34,18 +34,18 @@ public class Game {
     private String letterGuessed;
 
     @Column(name = "current_team_turn")
-    private int currentTeamTurn;
+    private Integer currentTeamTurn;
 
     @Column(name = "current_round")
-    private int currentRound;
+    private Integer currentRound;
 
     @Column(name = "total_team")
-    private int totalTeam;
+    private Integer totalTeam;
 
     public Game() {
     }
 
-    public Game(int gameId, String gameName, int roundId, Word word, String gameStatus, String letterGuessed, int currentTeamTurn, int currentRound, int totalTeam) {
+    public Game(Integer gameId, String gameName, Integer roundId, Word word, String gameStatus, String letterGuessed, Integer currentTeamTurn, Integer currentRound, Integer totalTeam) {
         this.gameId = gameId;
         this.gameName = gameName;
         this.roundId = roundId;
@@ -57,11 +57,11 @@ public class Game {
         this.totalTeam = totalTeam;
     }
 
-    public int getGameId() {
+    public Integer getGameId() {
         return gameId;
     }
 
-    public void setGameId(int gameId) {
+    public void setGameId(Integer gameId) {
         this.gameId = gameId;
     }
 
@@ -105,27 +105,27 @@ public class Game {
         this.letterGuessed = letterGuessed;
     }
 
-    public int getCurrentTeamTurn() {
+    public Integer getCurrentTeamTurn() {
         return currentTeamTurn;
     }
 
-    public void setCurrentTeamTurn(int currentTeamTurn) {
+    public void setCurrentTeamTurn(Integer currentTeamTurn) {
         this.currentTeamTurn = currentTeamTurn;
     }
 
-    public int getCurrentRound() {
+    public Integer getCurrentRound() {
         return currentRound;
     }
 
-    public void setCurrentRound(int currentRound) {
+    public void setCurrentRound(Integer currentRound) {
         this.currentRound = currentRound;
     }
 
-    public int getTotalTeam() {
+    public Integer getTotalTeam() {
         return totalTeam;
     }
 
-    public void setTotalTeam(int totalTeam) {
+    public void setTotalTeam(Integer totalTeam) {
         this.totalTeam = totalTeam;
     }
 

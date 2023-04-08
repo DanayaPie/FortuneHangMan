@@ -82,3 +82,23 @@
     justify-content: space-around;
 
 }
+
+.categoryBox{
+    display: flex;
+    flex-direction: row;
+    gap: 1.5%;
+    border: solid;
+    border-color: black;
+}
+.category{
+    border-color: black;
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+    font-size: 1em;
+    text-align: center;
+    text-align: center;
+    line-height: 5vw;
+    caret-color: transparent;
+}
+

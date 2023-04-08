@@ -9,7 +9,7 @@ function SolveThePuzzle(props) {
     <form className='' onSubmit={(e) => submitHandler(e)}>
       <label htmlFor="guess">Solve the Puzzle</label>
       <br />
-      <input type="text" id="guessPuzzle" pattern="[a-zA-Z]+" value={props.puzzleGuess}  name="guessPuzzle" onChange={(e) => props.onPuzzleGuessChange(e)}></input>
+      <input type="text" autoComplete="off" id="guessPuzzle" pattern="[a-zA-Z ]+" value={props.currentPuzzleGuessed}  name="guessPuzzle" onChange={(e) => props.onPuzzleGuessChange(e)}></input>
       <br />
       <button className= "btn btn-primary" type="submit">submit</button>
     </form>
