@@ -12,7 +12,7 @@ public class WordConstant {
         symbolsNoSpaceAfterSet.add('-');
 
         return symbolsNoSpaceAfterSet;
-    };
+    }
 
     public static final Set<Character> symbolsWithSpaceAfter() {
 
@@ -26,7 +26,7 @@ public class WordConstant {
         symbolsWithSpaceAfterSet.add(',');
 
         return symbolsWithSpaceAfterSet;
-    };
+    }
 
 
     public static final Set<Character> vowel() {
@@ -39,6 +39,5 @@ public class WordConstant {
         vowelsSet.add('U');
 
         return vowelsSet;
-    };
-
+    }
 }

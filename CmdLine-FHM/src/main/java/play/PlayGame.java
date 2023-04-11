@@ -3,6 +3,7 @@ package play;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import constant.WheelConstant;
 import constant.WordConstant;
 import model.*;
 import org.apache.http.HttpEntity;
@@ -44,6 +45,8 @@ public class PlayGame {
     private static Map<Character, List<Integer>> charInWordMap = new HashMap<>();
     private static Set<Character> charGuessedSet = new HashSet<>();
 
+    private static List<String> wheel = WheelConstant.wheel();
+    private static List<String> noneNumWheelResult = WheelConstant.noneNumWheelResult();
     private static final Set<Character> symbolsNoSpaceAfter = WordConstant.symbolsNoSpaceAfter();
     private static final Set<Character> symbolsWithSpaceAfter = WordConstant.symbolsWithSpaceAfter();
     private static final Set<Character> vowels = WordConstant.vowel();
@@ -250,7 +253,7 @@ public class PlayGame {
             chooseCategory();
             setWordToGuess();
             updateGameDb(); // does not update currentRound in game DB
-            updateCurrentRoundInGameDB(i + 1); // update currentRound in game DB
+            updateCurrentRoundInGameDb(i + 1); // update currentRound in game DB
 
             System.out.println(charInWordMap.toString());
             System.out.println(controlWord);
@@ -344,7 +347,7 @@ public class PlayGame {
         }
     }
 
-    public static void updateCurrentRoundInGameDB(int currentRound) throws IOException, URISyntaxException {
+    public static void updateCurrentRoundInGameDb(int currentRound) throws IOException, URISyntaxException {
 
 //        game.setGameId(2);
 
@@ -528,7 +531,7 @@ public class PlayGame {
 //        System.out.println("Game: " + game.toString());
     }
 
-    private static void updateCharGuessedInGame(char charGuessed) throws URISyntaxException, IOException {
+    private static void updateCharGuessedInGameDb(char charGuessed) throws URISyntaxException, IOException {
 
         URIBuilder builder = new URIBuilder("http://localhost:8080/game/" + game.getGameId());
 
@@ -669,9 +672,18 @@ public class PlayGame {
 
         while (controlWord.compareTo(wordToGuess) != 00) {
 
-            spinTheWheel(teamCounter);
-//            charInputManagement(teamCounter);
-            guessingTheWord(teamCounter);
+            Boolean isBankruptOrLoseTurn = false;
+
+            spinTheWheel(isBankruptOrLoseTurn);
+
+            if (isBankruptOrLoseTurn) { // bankrupt or lose a turn
+
+                nextTeamFunction(teamCounter);
+
+            } else {
+
+                guessingTheWord(teamCounter);
+            }
         }
 
 //        while (true) {
@@ -818,6 +830,7 @@ public class PlayGame {
             Boolean isEnoughPoints = true;
 
             charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
+            updateCharGuessedInGameDb(charGuessed);
 
             if (charInWordMap.containsKey(charGuessed)) { // guess correct
 
@@ -1464,107 +1477,117 @@ public class PlayGame {
 //        System.out.println(wordToGuess.length() - 1);
     }
 
-    public static void spinTheWheel(int teamCounter) throws IOException {
+    public static boolean spinTheWheel(Boolean isBankruptOrLoseTurn) throws IOException, URISyntaxException {
 
-//        round.setRoundId(79);
-//        team.setTeamId(74);
-//        getRoundByRoundIdTeamId();
+        Random rand = new Random();
+        String spinResultString = wheel.get(rand.nextInt(wheel.size()));
 
-        // show word before spinning the wheel
+        // spin the wheel
         System.out.println();
-        System.out.println(wordToGuess);
-        System.out.println("Round score: " + round.getRoundScore());
+        System.out.println("=====");
+        System.out.println("Spinning the wheel....");
+        System.out.println("Choices are 500, 550, 600, 650, 700, 900, 1000, 3500, Bankrupt, Lose A Turn, and Spin Token.");
 
-        int spinScore;
+        if (noneNumWheelResult.contains(spinResultString)) {
 
-        while (true) {
-            try {
 
-                // spin the wheel
-                System.out.println();
-                System.out.println("=====");
-                System.out.println("Spin the wheel.");
-                System.out.print("Let us know what you get: ");
+        } else {
 
-                String spinWheel = scan.nextLine();
+            int spinResultInt = Integer.parseInt(spinResultString);
+
+
+            System.out.println();
+            System.out.println("You landed on " + spinResultInt + "points!");
+
+            round.setSpinScore(spinResultInt);
+            updateRoundDb();
+        }
+
+
+        try {
+
+
+            String spinWheel = scan.nextLine();
 
 //                System.out.println("spinWheel: " + spinWheel.toUpperCase().trim());
 
-                if (spinWheel.toUpperCase().trim().equals("TOKEN")) { // landed on TOKEN
-                    round.setSpinToken(true);
-                    updateRoundDb();
-
-                    System.out.println();
-                    System.out.println("You got a TOKEN! Congratulation!");
-                    System.out.println("This token will be used when you guess wrong, you guess a character that has already been guessed, or went bankrupt.");
-                    break;
-
-                } else if (spinWheel.toUpperCase().trim().equals("SKIP")) { // landed on SKIP
-
-                    if (round.isSpinToken() == true) { // have token
-
-                        System.out.println();
-                        System.out.println("You landed on SKIP, which means your turn end here.");
-                        System.out.println("However, you have a token! You can continue playing.");
-
-                        round.setSpinToken(false);
-                        updateRoundDb();
-
-                        playTheGame(teamCounter);
-
-                    } else { // dont have token, switch turn
-
-                        System.out.println();
-                        System.out.println("How unfortunate... your turn ended here. Better luck next time.");
-                        System.out.println("Your information:");
-                        printContestantInformation();
-
-                        round.setSpinScore(0);
-                        updateRoundDb();
-
-                        nextTeamFunction(teamCounter); // switch to next team
-                        break;
-                    }
-                } else if (spinWheel.toUpperCase().trim().equals("BANKRUPT")) { // landed on BANKRUPTCY
-
-                    if (round.isSpinToken() == true) { // have token
-
-                        System.out.println();
-                        System.out.println("Looks like you went BANKRUPT...  You loose all your money from this round and your turn end here.");
-                        System.out.println("However, you have a TOKEN! You can continue playing.");
-
-                        round.setSpinToken(false);
-                        updateRoundDb();
-
-                        playTheGame(teamCounter);
-
-                    } else {
-                        System.out.println();
-                        System.out.println("You spend too much money you went BANKRUPT. You lose all your money from this round. You are too broke to continue playing.");
-                        System.out.println("Your information:");
-
-                        round.setSpinScore(0);
-                        round.setRoundScore(0);
-                        updateRoundDb();
-
-                        printContestantInformation();
-
-                        nextTeamFunction(teamCounter); // switch to next team
-                        break;
-                    }
-                } else {
-
-                    spinScore = Integer.parseInt(spinWheel);
-                    round.setSpinScore(spinScore);
-                    updateRoundDb();
-                    break;
-                }
-            } catch (NumberFormatException | URISyntaxException e) {
+            if (spinWheel.toUpperCase().trim().equals("TOKEN")) { // landed on TOKEN
+                round.setSpinToken(true);
+                updateRoundDb();
 
                 System.out.println();
-                System.out.println("Incorrect answer...");
-                System.out.println("Enter the amount as a whole number, unless it is a 'token', 'bankrupt', or 'skip'.");
+                System.out.println("You got a TOKEN! Congratulation!");
+                System.out.println("This token will be used when you guess wrong, you guess a character that has already been guessed, or went bankrupt.");
+                break;
+
+            } else if (spinWheel.toUpperCase().trim().equals("SKIP")) { // landed on SKIP
+
+                if (round.isSpinToken() == true) { // have token
+
+                    System.out.println();
+                    System.out.println("You landed on SKIP, which means your turn end here.");
+                    System.out.println("However, you have a token! You can continue playing.");
+
+                    round.setSpinToken(false);
+                    updateRoundDb();
+
+                    playTheGame(teamCounter);
+
+                } else { // dont have token, switch turn
+
+                    System.out.println();
+                    System.out.println("How unfortunate... your turn ended here. Better luck next time.");
+                    System.out.println("Your information:");
+                    printContestantInformation();
+
+                    round.setSpinScore(0);
+                    updateRoundDb();
+
+                    nextTeamFunction(teamCounter); // switch to next team
+                    break;
+                }
+            } else if (spinWheel.toUpperCase().trim().equals("BANKRUPT")) { // landed on BANKRUPTCY
+
+                if (round.isSpinToken() == true) { // have token
+
+                    System.out.println();
+                    System.out.println("Looks like you went BANKRUPT...  You loose all your money from this round and your turn end here.");
+                    System.out.println("However, you have a TOKEN! You can continue playing.");
+
+                    round.setSpinToken(false);
+                    updateRoundDb();
+
+                    playTheGame(teamCounter);
+
+                } else {
+                    System.out.println();
+                    System.out.println("You spend too much money you went BANKRUPT. You lose all your money from this round. You are too broke to continue playing.");
+                    System.out.println("Your information:");
+
+                    round.setSpinScore(0);
+                    round.setRoundScore(0);
+                    updateRoundDb();
+
+                    printContestantInformation();
+
+                    nextTeamFunction(teamCounter); // switch to next team
+                    break;
+                }
+            } else {
+
+                spinScore = Integer.parseInt(spinWheel);
+                round.setSpinScore(spinScore);
+                updateRoundDb();
+                break;
             }
+        } catch (NumberFormatException | URISyntaxException e) {
+
+            System.out.println();
+            System.out.println("Incorrect answer...");
+            System.out.println("Enter the amount as a whole number, unless it is a 'token', 'bankrupt', or 'skip'.");
         }
+
+        return isBankruptOrLoseTurn;
     }
 }
+
