@@ -19,16 +19,7 @@ function Game(props) {
     const SYMBOL_PATTERN = "-!$%^&*()_+|~=`{}:\";'<>?,.\\/";
     const VOWELS = "AEIOU";
     const VOWEL_PRICE = 250;
-    const letterSet = new Set();
 
-    useEffect(() => {
-        while(props.game !== null || props.game !== undefined){
-            [...props.game.letterGuessed].forEach((letter)=>{
-                letterSet.add(letter)
-            })
-            break;
-        }
-    });
 
     useEffect(() => {
         const timeOut = setTimeout(() => {
@@ -52,10 +43,11 @@ function Game(props) {
 
     function endOfRoundOrEndGame() {
         if (props.game.currentRound >= props.game.totalTeam) {
-            addRoundScoresToTotalScore();
+            if(!isGameOver){
+                addRoundScoresToTotalScore();
+            }
             setIsGameOver(true);
         } else {
-            console.log("Start New Round");
             let teamIds = props.teams.map((team) => team.teamId);
             addRoundScoresToTotalScore();
             props.postNewRoundsByTeam(teamIds)
@@ -71,16 +63,14 @@ function Game(props) {
                 //Get current round score of current team
                 if (teamRoundScore.roundScore >= VOWEL_PRICE) {
                     props.onRoundScoreUpdate(-VOWEL_PRICE, props.game.roundId, currentTeam);
-                    props.onLetterGuessed(currentLetterGuessed.toUpperCase(), true);
-                    letterSet.add(currentLetterGuessed);
+                    props.onLetterGuessed(currentLetterGuessed.toUpperCase());
                     //Vowels do not give money
                     pickedSentenceHandler(currentLetterGuessed.toUpperCase(), 0);
                     setCurrentLetterGuessed('');
                 }
             } else {
                 pickedSentenceHandler(currentLetterGuessed.toUpperCase(), teamRoundScore.spinScore);
-                props.onLetterGuessed(currentLetterGuessed.toUpperCase(), true);
-                letterSet.add(currentLetterGuessed.toUpperCase());
+                props.onLetterGuessed(currentLetterGuessed.toUpperCase());
                 setCurrentLetterGuessed('');
             }
         }
@@ -126,7 +116,6 @@ function Game(props) {
     function puzzleGuessedCorrectly(spinScore, currentTeam) {
         Array.from(pickedSentence).forEach((char) => {
             props.onLetterGuessed(char.toUpperCase(), true);
-            letterSet.add(char);
             pickedSentenceHandler(char, 0)
         });
         props.onRoundScoreUpdate(1 * spinScore, props.game.roundId, currentTeam);
@@ -158,8 +147,6 @@ function Game(props) {
 
     function addRoundScoresToTotalScore() {
         props.roundScores.forEach((round) => {
-            console.log("Why Not here?");
-            console.log(round.teamId, round.roundScore);
             props.onTotalScoreUpdate(round.teamId, round.roundScore);
         });
     }
