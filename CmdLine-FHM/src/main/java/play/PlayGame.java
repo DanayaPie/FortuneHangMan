@@ -670,7 +670,8 @@ public class PlayGame {
         while (controlWord.compareTo(wordToGuess) != 00) {
 
             spinTheWheel(teamCounter);
-            charInputManagement(teamCounter);
+//            charInputManagement(teamCounter);
+            guessingTheWord(teamCounter);
         }
 
 //        while (true) {
@@ -736,175 +737,96 @@ public class PlayGame {
         updateRoundDb();
     }
 
-    private static void charInputManagement(int teamCounter) throws URISyntaxException, IOException {
-        //A teams turn loop
-        do{
+    private static void guessingTheWord(int teamCounter) throws URISyntaxException, IOException {
+
+        Boolean isGuessing = true;
+        String guessedInput;
+
+        do {
+
             System.out.println();
             System.out.println(wordToGuess);
 
             System.out.print("Guess a character: ");
-            String guessedCharInput = scan.nextLine().trim().toUpperCase();
+            guessedInput = scan.nextLine().trim().toUpperCase();
 
-        }while(charInputValidation);
+            if (!guessedInput.isEmpty() || guessedInput.matches("^[\\sA-Z]+$")) { // if input is not empty and is alphabet
 
+                processingInput(isGuessing, guessedInput);
 
-        /*  Validate if...
-            1. input is more than 1 letter -> guess a word
-            2. input is a vowel -> calculate point to buy vowel
-            3. input is a number or is blank -> error message
-         */
-        charInputValidation(teamCounter, guessedCharInput);
+            } else { // if input is empty or is not alphabet
 
-        /*  Validate if
-            1. guess char that is already guessed
-            2. guess new char
-         */
-        calculateCharGuessed(teamCounter, guessedCharInput);
-    }
-
-    private static Boolean charInputValidation(int teamCounter, String guessedCharInput) throws URISyntaxException, IOException {
-
-        try {
-
-            char charGuessed = guessedCharInput.charAt(0);
-
-            /*  Validate if...
-                1. input is more than 1 letter -> guess a word
-                2. input is a vowel -> calculate point to buy vowel
-                3. input is a number or is blank -> error message
-             */
-            if (guessedCharInput.length() > 1) { // if input more than 1 character or guessed the word
-
-                if (word.getWord().equals(guessedCharInput)) { // if guess the word correct, move on to next round
-
-                    // set roundScore based on spinScore
-                    round.setRoundScore(round.getRoundScore() + round.getSpinScore());
-                    updateRoundDb();
-
-                    // set totalScore based on roundScore
-                    team.setTotalScore(team.getTotalScore() + round.getRoundScore());
-                    updateTeamDb();
-
-                    // break playTheGame() loop
-                    wordToGuess = controlWord;
-                } else { // guessed the word wrong
-
-                    if (round.isSpinToken() == true) { // have token
-
-                        System.out.println();
-                        System.out.println("Congratulation... on guessing wrong!");
-                        System.out.println("You are so lucky, you have a token! You can continue playing.");
-
-                        round.setSpinToken(false);
-                        round.setSpinScore(0);
-                        updateRoundDb();
-
-                        playTheGame(teamCounter);
-
-                    } else { // no token
-                        // change team
-                        System.out.println();
-                        System.out.println("Too bad, you guessed wrong! Next team turn");
-                        System.out.println();
-                        System.out.println("Your information:");
-                        printContestantInformation();
-
-                        nextTeamFunction(teamCounter); // switch to next team
-                    }
-                }
-            } else if (vowels.contains(charGuessed)) {
-
-                System.out.println();
-                System.out.println("$$$ A vowel cost 250 points. $$$");
-                System.out.println("You have " + round.getRoundScore() + " points.");
-
-                if (round.getRoundScore() < 250) { // don't have enough point to buy vowel
-                    System.out.println();
-                    System.out.println("uhh...");
-                    System.out.println("Looks like you do not have enough point to buy a vowel.");
-                    System.out.println("Please guess another character.");
-
-                    guessedCharInput = ""; // empty the string input
-                    charGuessed = '\0'; // empty char input
-                    charInputManagement(teamCounter); // guess again
-
-                } else { // have enough point to buy vowel
-
-                    round.setRoundScore(round.getRoundScore() - 250);
-                    System.out.println("You bought a vowel. You now have " + round.getRoundScore() + " point.");
-
-                    calculateCharGuessed(teamCounter, guessedCharInput); // bought a vowel
-                }
-            } else if (guessedCharInput.trim().isEmpty() || !guessedCharInput.trim().matches("^[\\sA-Z]+$")) { // blank input
                 System.out.println();
                 System.out.println("You must guess a letter.");
-
-                guessedCharInput = ""; // empty the string input
-                charGuessed = '\0'; // empty char input
-                charInputManagement(teamCounter); // guess again
             }
-        } catch (StringIndexOutOfBoundsException e) {
-            System.out.println();
-            System.out.println("You must guess a letter.");
 
-            guessedCharInput = ""; // empty the string input
-            charInputManagement(teamCounter); // guess again
+        } while (isGuessing && controlWord.compareTo(wordToGuess) != 0); // if guess wrong and don't have token -> next team turn
+
+        if (controlWord.compareTo(wordToGuess) != 0) {
+
+            nextTeamFunction(teamCounter);
         }
     }
 
-    private static void calculateCharGuessed(int teamCounter, String guessedCharInput) throws URISyntaxException, IOException {
+    private static boolean processingInput(boolean isGuessing, String guessedInput) throws URISyntaxException, IOException {
 
-        try {
-            char charGuessed = guessedCharInput.charAt(0);
+        if (guessedInput.length() > 1) { // if guess the word
 
-            System.out.println("calculateCharGuessed - charGuessed: " + charGuessed);
+            processWord(isGuessing, guessedInput);
 
-            updateCharGuessedInGame(charGuessed); // update character guessed in db
+        } else { // if guess character
 
-        /*  Validate if
-            1. guess char that is already guessed
-            2. guess new char
-         */
-            if (charGuessedSet.contains(guessedCharInput)) { // if char guess is already guessed
+            char charGuessed = guessedInput.charAt(0);
+            processChar(isGuessing, charGuessed);
+        }
 
-                if (round.isSpinToken() == true) { // have token
+        return isGuessing;
+    }
 
-                    System.out.println();
-                    System.out.println(guessedCharInput + " has been guessed already....");
-                    System.out.println("How fortunate, you have a TOKEN. You can continue guessing.");
+    private static boolean processChar(boolean isGuessing, char charGuessed) throws URISyntaxException, IOException {
 
-                    guessedCharInput = ""; // empty the string input
-                    charGuessed = '\0'; // empty char input
+        if (charGuessedSet.contains(charGuessed)) { // char is already guessed
 
-                    round.setSpinToken(false);
-                    round.setSpinScore(0);
-                    updateRoundDb();
+            if (round.isSpinToken() == true) { // have token
 
-                    charInputManagement(teamCounter);
+                System.out.println();
+                System.out.println(charGuessed + " has been guessed already....");
+                System.out.println("How fortunate, you have a TOKEN. You can continue guessing.");
 
-                } else {
+                round.setSpinToken(false);
+                round.setSpinScore(0);
+                updateRoundDb();
 
-                    System.out.println();
-                    System.out.println(guessedCharInput + " has been guessed already... You lose your turn here.");
-                    System.out.println();
-                    System.out.println("Your information:");
-                    printContestantInformation();
+                isGuessing = true; // continue guessing
 
-                    guessedCharInput = ""; // empty the string input
-                    charGuessed = '\0'; // empty char input
+            } else { // no token
 
-                    round.setSpinScore(0);
-                    updateRoundDb();
+                System.out.println();
+                System.out.println(charGuessed + " has been guessed already... You lose your turn here.");
+                System.out.println();
+                System.out.println("Your information:");
+                printContestantInformation();
 
-                    nextTeamFunction(teamCounter); // switch to next team
+                round.setSpinScore(0);
+                updateRoundDb();
+
+                isGuessing = false; // no longer guessing
+            }
+
+        } else { // if new char
+
+            Boolean isEnoughPoints = true;
+
+            charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
+
+            if (charInWordMap.containsKey(charGuessed)) { // guess correct
+
+                if (vowels.contains(charGuessed)) { // buying a vowel
+
+                    calculateVowelPoint(isEnoughPoints);
                 }
-            } else { // guessed new letter
 
-                charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
-
-                if (charInWordMap.containsKey(charGuessed)) { // guess character correct
-
-                    System.out.println("calculateCharGuessed - guess correct");
+                if (isEnoughPoints) {
 
                     // calculate scoreWon (charNumber * spinScore)
                     List<Integer> charGuessedList = charInWordMap.get(charGuessed);
@@ -913,9 +835,9 @@ public class PlayGame {
 
                     for (int i = 0; i < charGuessedList.size(); i++) {
 
-                        System.out.println("calculateCharGuessed - set wordToGuess after guess");
+//                        System.out.println("calculateCharGuessed - set wordToGuess after guess");
                         wordToGuess.setCharAt(charGuessedList.get(i), charGuessed);
-                        System.out.println("wordToGuess: " + wordToGuess);
+//                        System.out.println("wordToGuess: " + wordToGuess);
                     }
 
                     // update roundScore and reset spinScore
@@ -923,51 +845,338 @@ public class PlayGame {
                     round.setSpinScore(0);
                     updateRoundDb();
 
-//                System.out.println();
-//                System.out.println(wordToGuess);
-//                System.out.println("Round score: " + round.getRoundScore());
+//                    System.out.println();
+//                    System.out.println(wordToGuess);
+//                    System.out.println("Round score: " + round.getRoundScore());
 
-                } else { // guess character wrong
+                    isGuessing = false; // no longer guessing
+                }
 
-                    if (round.isSpinToken() == true) { // have token
+            } else { // guess wrong
 
-                        System.out.println();
-                        System.out.println("You guessed wrong...");
-                        System.out.println("Lucky, you have a TOKEN! You can continue guessing.");
+                if (round.isSpinToken() == true) { // have token
 
-                        guessedCharInput = ""; // empty the string input
-                        charGuessed = '\0'; // empty char input
+                    System.out.println();
+                    System.out.println("You guessed wrong...");
+                    System.out.println("Lucky, you have a TOKEN! You can continue guessing.");
 
-                        round.setSpinToken(false);
-                        round.setSpinScore(0);
-                        updateRoundDb();
+                    round.setSpinToken(false);
+                    round.setSpinScore(0);
+                    updateRoundDb();
 
-                        charInputManagement(teamCounter);
+                    isGuessing = true; // continue guessing
 
-                    } else { // don't have token
-                        // change team
-                        System.out.println();
-                        System.out.println("Too bad! You guessed wrong! Next team turn.");
-                        System.out.println();
-                        System.out.println("Your information:");
-                        printContestantInformation();
+                } else { // don't have token
 
-                        guessedCharInput = ""; // empty the string input
-                        charGuessed = '\0'; // empty char input
+                    System.out.println();
+                    System.out.println("Too bad! You guessed wrong! Next team turn.");
+                    System.out.println();
+                    System.out.println("Your information:");
+                    printContestantInformation();
 
-                        round.setSpinScore(0);
-                        updateRoundDb();
+                    round.setSpinScore(0);
+                    updateRoundDb();
 
-                        nextTeamFunction(teamCounter); // switch to next team
-                    }
+                    isGuessing = false; // no longer guessing
                 }
             }
-        } catch (StringIndexOutOfBoundsException e) {
-            System.out.println();
-            System.out.println("You must guess a letter.");
-            charInputManagement(teamCounter); // guess again
         }
+
+        return isGuessing;
     }
+
+    private static boolean processWord(boolean isGuessing, String guessedInput) throws URISyntaxException, IOException {
+
+        if (word.getWord().equals(guessedInput)) { // if guess the word correct, move on to next round
+
+            // set roundScore based on spinScore
+            round.setRoundScore(round.getRoundScore() + round.getSpinScore());
+            updateRoundDb();
+
+            // set totalScore based on roundScore
+            team.setTotalScore(team.getTotalScore() + round.getRoundScore());
+            updateTeamDb();
+
+            // break playTheGame() loop
+            wordToGuess = controlWord;
+
+            isGuessing = false; // no longer guessing
+
+        } else { // guessed the word wrong
+
+            if (round.isSpinToken() == true) { // have token
+
+                System.out.println();
+                System.out.println("Congratulation... on guessing wrong!");
+                System.out.println("You are so lucky, you have a token! You can continue playing.");
+
+                round.setSpinToken(false);
+                round.setSpinScore(0);
+                updateRoundDb();
+
+                isGuessing = true; // continue guessing
+
+            } else { // no token
+
+                // change team
+                System.out.println();
+                System.out.println("Too bad, you guessed wrong! Next team turn");
+                System.out.println();
+                System.out.println("Your information:");
+                printContestantInformation();
+
+                isGuessing = false; // no longer guessing
+            }
+        }
+
+        return isGuessing;
+    }
+
+//    private static void charInputManagement(int teamCounter) throws URISyntaxException, IOException {
+//        //A teams turn loop
+//
+//        boolean charInputValidationBoolean = false;
+//        String guessedCharInput;
+//
+//        do {
+//            System.out.println();
+//            System.out.println(wordToGuess);
+//
+//            System.out.print("Guess a character: ");
+//            guessedCharInput = scan.nextLine().trim().toUpperCase();
+//
+//            /*  Validate if...
+//                1. input is more than 1 letter -> guess a word
+//                2. input is a vowel -> calculate point to buy vowel
+//                3. input is a number or is blank -> error message
+//             */
+//            charInputValidation(charInputValidationBoolean, teamCounter, guessedCharInput);
+//
+//        } while (!charInputValidationBoolean);
+//
+//        if (wordToGuess.compareTo(controlWord) != 0) { // if wordToGuess not match controlWord
+//
+//            /*  Validate if
+//                1. guess char that is already guessed
+//                2. guess new char
+//             */
+//            calculateCharGuessed(teamCounter, guessedCharInput);
+//        }
+//    }
+
+//    private static boolean charInputValidation(boolean charInputValidationBoolean, int teamCounter, String guessedCharInput) throws URISyntaxException, IOException {
+//
+//        try {
+//
+//            char charGuessed = guessedCharInput.charAt(0);
+//
+//            //  1. input is more than 1 letter -> guess a word
+//            if (guessedCharInput.length() > 1) {
+//
+//                checkWholeWordGuessed(charInputValidationBoolean, teamCounter, guessedCharInput);
+//
+//                return charInputValidationBoolean;
+//
+//                //  2. input is a vowel -> calculate point to buy vowel
+//            } else if (vowels.contains(charGuessed)) {
+//
+////                calculateVowelPoint(charInputValidationBoolean, charGuessed);
+//
+//                return charInputValidationBoolean;
+//
+//                // 3. input is not alphabet or is blank -> error message
+//            } else if (guessedCharInput.trim().isEmpty() || !guessedCharInput.trim().matches("^[\\sA-Z]+$")) {
+//                System.out.println();
+//                System.out.println("You must guess a letter.");
+//
+//                return charInputValidationBoolean;
+//            }
+//        } catch (StringIndexOutOfBoundsException e) {
+//            System.out.println();
+//            System.out.println("You must guess a letter.");
+//
+//            return charInputValidationBoolean;
+//        }
+//
+//        return charInputValidationBoolean;
+//    }
+
+    private static boolean calculateVowelPoint(boolean isEnoughPoints) {
+
+        System.out.println();
+        System.out.println("$$$ A vowel cost 250 points. $$$");
+        System.out.println("You have " + round.getRoundScore() + " points.");
+
+        if (round.getRoundScore() < 250) { // don't have enough point to buy vowel
+            System.out.println();
+            System.out.println("uhh...");
+            System.out.println("Looks like you do not have enough point to buy a vowel.");
+            System.out.println("Please guess another character.");
+
+            isEnoughPoints = false;
+
+        } else { // have enough point to buy vowel
+
+            round.setRoundScore(round.getRoundScore() - 250); // buy a vowel
+            System.out.println("You bought a vowel. You now have " + round.getRoundScore() + " point.");
+
+            isEnoughPoints = true;
+        }
+
+        return isEnoughPoints;
+    }
+
+//    private static boolean checkWholeWordGuessed(boolean charInputValidationBoolean, int teamCounter, String guessedCharInput) throws URISyntaxException, IOException {
+//
+//        if (word.getWord().equals(guessedCharInput)) { // if guess the word correct, move on to next round
+//
+//            // set roundScore based on spinScore
+//            round.setRoundScore(round.getRoundScore() + round.getSpinScore());
+//            updateRoundDb();
+//
+//            // set totalScore based on roundScore
+//            team.setTotalScore(team.getTotalScore() + round.getRoundScore());
+//            updateTeamDb();
+//
+//            charInputValidationBoolean = true;
+//            // break playTheGame() loop
+//            wordToGuess = controlWord;
+//
+//            return charInputValidationBoolean;
+//
+//        } else { // guessed the word wrong
+//
+//            if (round.isSpinToken() == true) { // have token
+//
+//                System.out.println();
+//                System.out.println("Congratulation... on guessing wrong!");
+//                System.out.println("You are so lucky, you have a token! You can continue playing.");
+//
+//                round.setSpinToken(false);
+//                round.setSpinScore(0);
+//                updateRoundDb();
+//
+//                return charInputValidationBoolean;
+//
+//            } else { // no token
+//                // change team
+//                System.out.println();
+//                System.out.println("Too bad, you guessed wrong! Next team turn");
+//                System.out.println();
+//                System.out.println("Your information:");
+//                printContestantInformation();
+//
+//                nextTeamFunction(teamCounter); // switch to next team
+//
+//                return charInputValidationBoolean;
+//            }
+//        }
+//    }
+
+//    private static void calculateCharGuessed(int teamCounter, String guessedCharInput) throws URISyntaxException, IOException {
+//
+//        try {
+//            char charGuessed = guessedCharInput.charAt(0);
+//
+//            System.out.println("calculateCharGuessed - charGuessed: " + charGuessed);
+//
+//            updateCharGuessedInGame(charGuessed); // update character guessed in db
+//
+//            /*  Validate if
+//                1. guess char that is already guessed
+//                2. guess new char
+//             */
+//            if (charGuessedSet.contains(guessedCharInput)) { // if char guess is already guessed
+//
+//                if (round.isSpinToken() == true) { // have token
+//
+//                    System.out.println();
+//                    System.out.println(guessedCharInput + " has been guessed already....");
+//                    System.out.println("How fortunate, you have a TOKEN. You can continue guessing.");
+//
+//                    round.setSpinToken(false);
+//                    round.setSpinScore(0);
+//                    updateRoundDb();
+//
+////                    charInputManagement(teamCounter);
+//
+//                } else {
+//
+//                    System.out.println();
+//                    System.out.println(guessedCharInput + " has been guessed already... You lose your turn here.");
+//                    System.out.println();
+//                    System.out.println("Your information:");
+//                    printContestantInformation();
+//
+//                    round.setSpinScore(0);
+//                    updateRoundDb();
+//
+//                    nextTeamFunction(teamCounter); // switch to next team
+//                }
+//            } else { // guessed new letter
+//
+//                charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
+//
+//                if (charInWordMap.containsKey(charGuessed)) { // guess character correct
+//
+//                    System.out.println("calculateCharGuessed - guess correct");
+//
+//                    // calculate scoreWon (charNumber * spinScore)
+//                    List<Integer> charGuessedList = charInWordMap.get(charGuessed);
+//                    int charNumber = charGuessedList.size();
+//                    int scoreWon = charNumber * round.getSpinScore();
+//
+//                    for (int i = 0; i < charGuessedList.size(); i++) {
+//
+//                        System.out.println("calculateCharGuessed - set wordToGuess after guess");
+//                        wordToGuess.setCharAt(charGuessedList.get(i), charGuessed);
+//                        System.out.println("wordToGuess: " + wordToGuess);
+//                    }
+//
+//                    // update roundScore and reset spinScore
+//                    round.setRoundScore(round.getRoundScore() + scoreWon);
+//                    round.setSpinScore(0);
+//                    updateRoundDb();
+//
+////                System.out.println();
+////                System.out.println(wordToGuess);
+////                System.out.println("Round score: " + round.getRoundScore());
+//
+//                } else { // guess character wrong
+//
+//                    if (round.isSpinToken() == true) { // have token
+//
+//                        System.out.println();
+//                        System.out.println("You guessed wrong...");
+//                        System.out.println("Lucky, you have a TOKEN! You can continue guessing.");
+//
+//                        round.setSpinToken(false);
+//                        round.setSpinScore(0);
+//                        updateRoundDb();
+//
+//                        charInputManagement(teamCounter);
+//
+//                    } else { // don't have token
+//                        // change team
+//                        System.out.println();
+//                        System.out.println("Too bad! You guessed wrong! Next team turn.");
+//                        System.out.println();
+//                        System.out.println("Your information:");
+//                        printContestantInformation();
+//
+//                        round.setSpinScore(0);
+//                        updateRoundDb();
+//
+//                        nextTeamFunction(teamCounter); // switch to next team
+//                    }
+//                }
+//            }
+//        } catch (StringIndexOutOfBoundsException e) {
+//            System.out.println();
+//            System.out.println("You must guess a letter.");
+//            charInputManagement(teamCounter); // guess again
+//        }
+//    }
 
 //    private static String isCharGuessedEmpty() {
 //
@@ -1170,8 +1379,6 @@ public class PlayGame {
 
         // update game DB
         updateGameDb();
-
-        playTheGame(teamCounter); // play the game
     }
 
     public static void setWordToGuess() {
