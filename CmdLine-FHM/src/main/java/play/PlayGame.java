@@ -255,11 +255,11 @@ public class PlayGame {
             updateGameDb(); // does not update currentRound in game DB
             updateCurrentRoundInGameDb(i + 1); // update currentRound in game DB
 
-            System.out.println(charInWordMap.toString());
-            System.out.println(controlWord);
-            System.out.println(controlWord.length() - 1);
-            System.out.println(wordToGuess);
-            System.out.println(wordToGuess.length() - 1);
+//            System.out.println(charInWordMap.toString());
+//            System.out.println(controlWord);
+//            System.out.println(controlWord.length() - 1);
+//            System.out.println(wordToGuess);
+//            System.out.println(wordToGuess.length() - 1);
 
             // play the game
             playTheGame(teamCounter); // play the round
@@ -670,9 +670,9 @@ public class PlayGame {
 //        String w = "Banana";
 //        word.setWord(w.toUpperCase());
 
-        while (controlWord.compareTo(wordToGuess) != 00) {
+        while (controlWord.compareTo(wordToGuess) != 0) {
 
-            Boolean isBankruptOrLoseTurn = false;
+            boolean isBankruptOrLoseTurn = false;
 
             spinTheWheel(isBankruptOrLoseTurn);
 
@@ -758,6 +758,7 @@ public class PlayGame {
 
             System.out.println();
             System.out.println(wordToGuess);
+            System.out.println("Round Score: " + round.getRoundScore());
 
             System.out.print("Guess a character: ");
             guessedInput = scan.nextLine().trim().toUpperCase();
@@ -772,9 +773,9 @@ public class PlayGame {
                 System.out.println("You must guess a letter.");
             }
 
-        } while (isGuessing && controlWord.compareTo(wordToGuess) != 0); // if guess wrong and don't have token -> next team turn
+        } while (isGuessing && !wordToGuess.equals(controlWord)); // if guess wrong and don't have token -> next team turn
 
-        if (controlWord.compareTo(wordToGuess) != 0) {
+        if (!wordToGuess.equals(controlWord)) {
 
             nextTeamFunction(teamCounter);
         }
@@ -829,9 +830,6 @@ public class PlayGame {
 
             Boolean isEnoughPoints = true;
 
-            charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
-            updateCharGuessedInGameDb(charGuessed);
-
             if (charInWordMap.containsKey(charGuessed)) { // guess correct
 
                 if (vowels.contains(charGuessed)) { // buying a vowel
@@ -853,6 +851,9 @@ public class PlayGame {
 //                        System.out.println("wordToGuess: " + wordToGuess);
                     }
 
+                    charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
+                    updateCharGuessedInGameDb(charGuessed);
+
                     // update roundScore and reset spinScore
                     round.setRoundScore(round.getRoundScore() + scoreWon);
                     round.setSpinScore(0);
@@ -867,7 +868,11 @@ public class PlayGame {
 
             } else { // guess wrong
 
+                charGuessedSet.add(charGuessed); // add the letter to charGuessedSet
+                updateCharGuessedInGameDb(charGuessed);
+
                 if (round.isSpinToken() == true) { // have token
+
 
                     System.out.println();
                     System.out.println("You guessed wrong...");
@@ -1489,15 +1494,20 @@ public class PlayGame {
         // spin the wheel
         System.out.println();
         System.out.println("=====");
-        System.out.println("Spinning the wheel....");
+        System.out.println("Spin The Wheel!");
         System.out.println("Choices are 500, 550, 600, 650, 700, 900, 1000, 3500, Bankrupt, Lose A Turn, and Spin Token.");
+        System.out.println("Press 'ENTER' to spin the wheel.");
+        scan.nextLine();
 
         if (noneNumWheelResult.contains(spinResultString)) {
+
+            System.out.println("=====");
+            System.out.println("You landed on " + spinResultString + ".");
 
             if (spinResultString == "TOKEN") {
 
                 System.out.println();
-                System.out.println("You got a TOKEN! Congratulation!");
+                System.out.println("Congratulation on getting a TOKEN!");
                 System.out.println("This token will be used when you guess wrong, you guess a character that has already been guessed, or went bankrupt.");
 
                 round.setSpinToken(true);
@@ -1510,11 +1520,8 @@ public class PlayGame {
                 if (round.isSpinToken() == true) { // have token
 
                     System.out.println();
-                    System.out.println("You landed on SKIP, which means your turn end here.");
-                    System.out.println("However, you have a token! You can continue playing.");
-
-                    round.setSpinToken(false);
-                    updateRoundDb();
+                    System.out.println("Your turn should end here...");
+                    System.out.println("However, you have a TOKEN! You can continue playing.");
 
                     round.setSpinToken(false);
                     updateRoundDb();
@@ -1524,7 +1531,7 @@ public class PlayGame {
                 } else { // no token
 
                     System.out.println();
-                    System.out.println("How unfortunate... your turn ended here. Better luck next time.");
+                    System.out.println("How unfortunate... Your turn ended here. Better luck next time.");
                     System.out.println("Your information:");
                     printContestantInformation();
 
@@ -1539,7 +1546,7 @@ public class PlayGame {
                 if (round.isSpinToken() == true) { // have token
 
                     System.out.println();
-                    System.out.println("Looks like you went BANKRUPT...  You loose all your money from this round and your turn end here.");
+                    System.out.println("Seem like you went BANKRUPT...  You loose all your money from this round and your turn end here.");
                     System.out.println("However, you have a TOKEN! You can continue playing.");
 
                     round.setSpinToken(false);
@@ -1568,7 +1575,7 @@ public class PlayGame {
             int spinResultInt = Integer.parseInt(spinResultString);
 
             System.out.println();
-            System.out.println("You landed on " + spinResultInt + "points!");
+            System.out.println("You landed on " + spinResultInt + " points!");
 
             round.setSpinScore(spinResultInt);
             updateRoundDb();
