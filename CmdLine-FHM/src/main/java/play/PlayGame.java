@@ -664,6 +664,7 @@ public class PlayGame {
 
     public static void playTheGame(int teamCounter) throws URISyntaxException, IOException {
 
+//        System.out.println("wordToGuess.toString().equals(controlWord.toString()): " + wordToGuess.toString().equals(controlWord.toString()));
 //        game.setGameId(10);
 //        round.setRoundId(26);
 //        round.setTeamId(17);
@@ -673,16 +674,28 @@ public class PlayGame {
         while (controlWord.compareTo(wordToGuess) != 0) {
 
             boolean isBankruptOrLoseTurn = false;
+            boolean isGuessing = true;
 
-            spinTheWheel(isBankruptOrLoseTurn);
+            do {
 
-            if (isBankruptOrLoseTurn) { // bankrupt or lose a turn
+                if (!spinTheWheel(isBankruptOrLoseTurn)) { // not bankrupt and not lose a turn
 
+                    isGuessing = guessingTheWord(isGuessing, teamCounter);
+                } else {
+
+                    System.out.println("next team turn cuz bankrupt or lose a turn");
+                    nextTeamFunction(teamCounter);
+
+                    break;
+                }
+            } while ((!isBankruptOrLoseTurn || isGuessing) && controlWord.compareTo(wordToGuess) != 0); // keep guessing if not guess wrong and word is not complete
+
+            if (!isGuessing && !wordToGuess.toString().equals(controlWord.toString())) { // change team if not guessing and word is not complete
+
+                System.out.println("next team turn cuz guess wrong");
                 nextTeamFunction(teamCounter);
 
-            } else {
-
-                guessingTheWord(teamCounter);
+                isGuessing = true;
             }
         }
 
@@ -749,48 +762,55 @@ public class PlayGame {
         updateRoundDb();
     }
 
-    private static void guessingTheWord(int teamCounter) throws URISyntaxException, IOException {
+    private static boolean guessingTheWord(boolean isGuessing, int teamCounter) throws URISyntaxException, IOException {
 
-        Boolean isGuessing = true;
         String guessedInput;
 
-        do {
+//        do {
+
+        // before guess
+        System.out.println();
+        System.out.println(wordToGuess);
+        System.out.println("Round Score: " + round.getRoundScore());
+
+        System.out.print("Guess a character: ");
+        guessedInput = scan.nextLine().trim().toUpperCase();
+
+        if (!guessedInput.isEmpty() || guessedInput != null || guessedInput.matches("^[\\sA-Z]+$")) { // if input is not empty and is alphabet
+
+            isGuessing = processingInput(isGuessing, guessedInput);
+
+        } else { // if input is empty or is not alphabet
 
             System.out.println();
-            System.out.println(wordToGuess);
-            System.out.println("Round Score: " + round.getRoundScore());
-
-            System.out.print("Guess a character: ");
-            guessedInput = scan.nextLine().trim().toUpperCase();
-
-            if (!guessedInput.isEmpty() || guessedInput.matches("^[\\sA-Z]+$")) { // if input is not empty and is alphabet
-
-                processingInput(isGuessing, guessedInput);
-
-            } else { // if input is empty or is not alphabet
-
-                System.out.println();
-                System.out.println("You must guess a letter.");
-            }
-
-        } while (isGuessing && !wordToGuess.equals(controlWord)); // if guess wrong and don't have token -> next team turn
-
-        if (!wordToGuess.equals(controlWord)) {
-
-            nextTeamFunction(teamCounter);
+            System.out.println("You must guess a letter.");
         }
+
+        // after guess
+        System.out.println();
+        System.out.println(wordToGuess);
+        System.out.println("Round Score: " + round.getRoundScore());
+
+//        } while (isGuessing && !wordToGuess.equals(controlWord)); // if guess wrong and don't have token -> next team turn
+//
+//        if (!wordToGuess.equals(controlWord)) {
+//
+//            nextTeamFunction(teamCounter);
+//        }
+
+        return isGuessing;
     }
 
     private static boolean processingInput(boolean isGuessing, String guessedInput) throws URISyntaxException, IOException {
 
         if (guessedInput.length() > 1) { // if guess the word
 
-            processWord(isGuessing, guessedInput);
+            isGuessing = processWord(isGuessing, guessedInput);
 
         } else { // if guess character
 
             char charGuessed = guessedInput.charAt(0);
-            processChar(isGuessing, charGuessed);
+            isGuessing = processChar(isGuessing, charGuessed);
         }
 
         return isGuessing;
@@ -834,7 +854,7 @@ public class PlayGame {
 
                 if (vowels.contains(charGuessed)) { // buying a vowel
 
-                    calculateVowelPoint(isEnoughPoints);
+                    isEnoughPoints = calculateVowelPoint(isEnoughPoints);
                 }
 
                 if (isEnoughPoints) {
@@ -872,7 +892,6 @@ public class PlayGame {
                 updateCharGuessedInGameDb(charGuessed);
 
                 if (round.isSpinToken() == true) { // have token
-
 
                     System.out.println();
                     System.out.println("You guessed wrong...");
