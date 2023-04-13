@@ -71,7 +71,7 @@ public class PlayGame {
         }
 
         System.out.println();
-        System.out.print("Total Number of Team: ");
+        System.out.print("Total Number of Contestants: ");
         int totalTeam;
 
         while (true) {
@@ -80,9 +80,9 @@ public class PlayGame {
 
                 if (totalTeam < 2 || totalTeam > 4) { // if total team is not btw 2-4
 //                    System.out.println("int");
-                    System.out.println("Total number of team must be a whole number and must be between 2-4.");
+                    System.out.println("Total number of contestants must be a whole number and must be between 2-4.");
                     System.out.println();
-                    System.out.print("Total Number of Team: ");
+                    System.out.print("Total Number of Contestants: ");
 
                 } else { // pass validation
 
@@ -91,9 +91,9 @@ public class PlayGame {
                 }
             } catch (NumberFormatException e) { // if total team is not int
 //                System.out.println("not int");
-                System.out.println("Total number of team must be a whole number and must be between 2-4.");
+                System.out.println("Total number of contestants must be a whole number and must be between 2-4.");
                 System.out.println();
-                System.out.print("Total Number of Team: ");
+                System.out.print("Total Number of Contestants: ");
             }
         }
 
@@ -120,11 +120,11 @@ public class PlayGame {
         game = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<Game>() {
         });
 
-        addTeam();
+        addContestant();
 
     }
 
-    public static void addTeam() throws IOException, URISyntaxException {
+    public static void addContestant() throws IOException, URISyntaxException {
 
         int totalTeam = game.getTotalTeam();
         String teamName;
@@ -138,14 +138,14 @@ public class PlayGame {
             while (true) {
 
                 System.out.println();
-                System.out.print("Team " + i + " Name: ");
+                System.out.print("Contestant " + i + " Name: ");
                 teamName = scan.nextLine();
 
                 if (!teamName.trim().isEmpty()) {
                     break;
                 } else {
 
-                    System.out.println("Team name cannot be blank.");
+                    System.out.println("Contestant name cannot be blank.");
                 }
             }
 
@@ -298,7 +298,7 @@ public class PlayGame {
         for (Team team : teamList) {
 
             System.out.println();
-            System.out.println("Team " + team.getTeamName() + ": " + team.getTotalScore() + " points.");
+            System.out.println(team.getTeamName() + ": " + team.getTotalScore() + " points.");
             System.out.println("=====");
 
             if (team.getTotalScore() > highestScore) {
@@ -329,7 +329,8 @@ public class PlayGame {
 
     public static void getTeamsByGameId() throws IOException {
 
-        game.setGameId(25);
+//        game.setGameId(12);
+
         HttpGet getTeamsByGameIdRequest = new HttpGet("http://localhost:8080/team/game/" + game.getGameId());
 
         CloseableHttpResponse getTeamByGameIdResponse = httpClient.execute(getTeamsByGameIdRequest);
@@ -342,9 +343,9 @@ public class PlayGame {
         teamList = mapper.readValue(EntityUtils.toString(responseEntity), new TypeReference<List<Team>>() {
         });
 
-        for (Team team : teamList) {
-            System.out.println(team.toString());
-        }
+//        for (Team team : teamList) {
+//            System.out.println(team.toString());
+//        }
     }
 
     public static void updateCurrentRoundInGameDb(int currentRound) throws IOException, URISyntaxException {
@@ -664,38 +665,65 @@ public class PlayGame {
 
     public static void playTheGame(int teamCounter) throws URISyntaxException, IOException {
 
-//        System.out.println("wordToGuess.toString().equals(controlWord.toString()): " + wordToGuess.toString().equals(controlWord.toString()));
-//        game.setGameId(10);
-//        round.setRoundId(26);
-//        round.setTeamId(17);
-//        String w = "Banana";
-//        word.setWord(w.toUpperCase());
-
         while (controlWord.compareTo(wordToGuess) != 0) {
 
-            boolean isBankruptOrLoseTurn = false;
+            boolean isNextTeam = false;
             boolean isGuessing = true;
 
             do {
 
-                if (!spinTheWheel(isBankruptOrLoseTurn)) { // not bankrupt and not lose a turn
+                // before spinning wheel
+                System.out.println();
+                System.out.println(wordToGuess);
+                System.out.println("Round Score: " + round.getRoundScore());
 
-                    isGuessing = guessingTheWord(isGuessing, teamCounter);
-                } else {
+                boolean[] isGuessingIsNextTeamBooleans;
 
-                    System.out.println("next team turn cuz bankrupt or lose a turn");
-                    nextTeamFunction(teamCounter);
+                isGuessingIsNextTeamBooleans = spinTheWheel(isGuessing, isNextTeam); // spin the wheel
 
-                    break;
+                // handle 2 booleans
+                isGuessing = isGuessingIsNextTeamBooleans[0];
+                isNextTeam = isGuessingIsNextTeamBooleans[1];
+
+//                System.out.println("spinTheWheel isGuessingIsNextTeamBooleans : " + isGuessing + ", " + isNextTeam);
+
+                while (isGuessing) {
+//                    System.out.println("guessingTheWord do while");
+                    isGuessingIsNextTeamBooleans = guessingTheWord(isGuessing, isNextTeam); // guess the word
+
+                    // handle 2 booleans
+                    isGuessing = isGuessingIsNextTeamBooleans[0];
+                    isNextTeam = isGuessingIsNextTeamBooleans[1];
+
+//                    System.out.println("guessingTheWord isGuessingIsNextTeamBooleans : " + isGuessing + ", " + isNextTeam);
                 }
-            } while ((!isBankruptOrLoseTurn || isGuessing) && controlWord.compareTo(wordToGuess) != 0); // keep guessing if not guess wrong and word is not complete
-
-            if (!isGuessing && !wordToGuess.toString().equals(controlWord.toString())) { // change team if not guessing and word is not complete
-
-                System.out.println("next team turn cuz guess wrong");
-                nextTeamFunction(teamCounter);
 
                 isGuessing = true;
+
+//                if (!spinTheWheel(isBankruptOrLoseTurn)) { // not bankrupt and not lose a turn
+//
+//                    isGuessing = guessingTheWord(isGuessing, teamCounter);
+//                } else {
+//
+//                    System.out.println("next team turn cuz bankrupt or lose a turn");
+//                    nextTeamFunction(teamCounter);
+//
+//                    break;
+//                }
+            } while (!isNextTeam && controlWord.compareTo(wordToGuess) != 0); // keep guessing if not guess wrong and word is not complete
+
+            if (isNextTeam && !wordToGuess.toString().equals(controlWord.toString())) { // change team if not guessing and word is not complete
+
+                System.out.println();
+                System.out.println("Your information: ");
+                printContestantInformation();
+
+                teamCounter = nextTeamFunction(teamCounter); // next team
+
+                System.out.println();
+                System.out.println("Next contestant information: ");
+                printContestantInformation();
+
             }
         }
 
@@ -762,11 +790,10 @@ public class PlayGame {
         updateRoundDb();
     }
 
-    private static boolean guessingTheWord(boolean isGuessing, int teamCounter) throws URISyntaxException, IOException {
+    private static boolean[] guessingTheWord(boolean isGuessing, boolean isNextTeam) throws URISyntaxException, IOException {
 
         String guessedInput;
-
-//        do {
+        boolean[] isGuessingIsNextTeamBooleans;
 
         // before guess
         System.out.println();
@@ -776,47 +803,39 @@ public class PlayGame {
         System.out.print("Guess a character: ");
         guessedInput = scan.nextLine().trim().toUpperCase();
 
-        if (!guessedInput.isEmpty() || guessedInput != null || guessedInput.matches("^[\\sA-Z]+$")) { // if input is not empty and is alphabet
+        if (!guessedInput.isEmpty() && guessedInput.matches("[A-Z]+")) { // if input is not empty and is alphabet
 
-            isGuessing = processingInput(isGuessing, guessedInput);
+            isGuessingIsNextTeamBooleans = processingInput(isGuessing, isNextTeam, guessedInput);
 
         } else { // if input is empty or is not alphabet
 
             System.out.println();
             System.out.println("You must guess a letter.");
+
+            isGuessingIsNextTeamBooleans = new boolean[]{true, false};
         }
 
-        // after guess
-        System.out.println();
-        System.out.println(wordToGuess);
-        System.out.println("Round Score: " + round.getRoundScore());
-
-//        } while (isGuessing && !wordToGuess.equals(controlWord)); // if guess wrong and don't have token -> next team turn
-//
-//        if (!wordToGuess.equals(controlWord)) {
-//
-//            nextTeamFunction(teamCounter);
-//        }
-
-        return isGuessing;
+        return isGuessingIsNextTeamBooleans;
     }
 
-    private static boolean processingInput(boolean isGuessing, String guessedInput) throws URISyntaxException, IOException {
+    private static boolean[] processingInput(boolean isGuessing, boolean isNextTeam, String guessedInput) throws URISyntaxException, IOException {
+
+        boolean[] isGuessingIsNextTeamBooleans;
 
         if (guessedInput.length() > 1) { // if guess the word
 
-            isGuessing = processWord(isGuessing, guessedInput);
+            isGuessingIsNextTeamBooleans = processWord(isGuessing, isNextTeam, guessedInput);
 
         } else { // if guess character
 
             char charGuessed = guessedInput.charAt(0);
-            isGuessing = processChar(isGuessing, charGuessed);
+            isGuessingIsNextTeamBooleans = processChar(isGuessing, isNextTeam, charGuessed);
         }
 
-        return isGuessing;
+        return isGuessingIsNextTeamBooleans;
     }
 
-    private static boolean processChar(boolean isGuessing, char charGuessed) throws URISyntaxException, IOException {
+    private static boolean[] processChar(boolean isGuessing, boolean isNextTeam, char charGuessed) throws URISyntaxException, IOException {
 
         if (charGuessedSet.contains(charGuessed)) { // char is already guessed
 
@@ -824,26 +843,27 @@ public class PlayGame {
 
                 System.out.println();
                 System.out.println(charGuessed + " has been guessed already....");
-                System.out.println("How fortunate, you have a TOKEN. You can continue guessing.");
+                System.out.println("How fortunate, you have a TOKEN. You can continue playing.");
 
                 round.setSpinToken(false);
                 round.setSpinScore(0);
                 updateRoundDb();
 
-                isGuessing = true; // continue guessing
+                // spin and guess again
+                isGuessing = false;
+                isNextTeam = false;
 
             } else { // no token
 
                 System.out.println();
                 System.out.println(charGuessed + " has been guessed already... You lose your turn here.");
                 System.out.println();
-                System.out.println("Your information:");
-                printContestantInformation();
 
                 round.setSpinScore(0);
                 updateRoundDb();
 
                 isGuessing = false; // no longer guessing
+                isNextTeam = true; // next team
             }
 
         } else { // if new char
@@ -883,7 +903,14 @@ public class PlayGame {
 //                    System.out.println(wordToGuess);
 //                    System.out.println("Round score: " + round.getRoundScore());
 
-                    isGuessing = false; // no longer guessing
+                    // spin and guess again
+                    isGuessing = false;
+
+                } else { // not enough point
+
+                    isGuessing = true; // guess again
+                    isNextTeam = false;
+                    ; // not changing team
                 }
 
             } else { // guess wrong
@@ -895,13 +922,15 @@ public class PlayGame {
 
                     System.out.println();
                     System.out.println("You guessed wrong...");
-                    System.out.println("Lucky, you have a TOKEN! You can continue guessing.");
+                    System.out.println("Lucky, you have a TOKEN! You can continue playing.");
 
                     round.setSpinToken(false);
                     round.setSpinScore(0);
                     updateRoundDb();
 
-                    isGuessing = true; // continue guessing
+                    // spin and guess again
+                    isGuessing = false;
+                    isNextTeam = false;
 
                 } else { // don't have token
 
@@ -915,14 +944,15 @@ public class PlayGame {
                     updateRoundDb();
 
                     isGuessing = false; // no longer guessing
+                    isNextTeam = true; // next team
                 }
             }
         }
 
-        return isGuessing;
+        return new boolean[]{isGuessing, isNextTeam};
     }
 
-    private static boolean processWord(boolean isGuessing, String guessedInput) throws URISyntaxException, IOException {
+    private static boolean[] processWord(boolean isGuessing, boolean isNextTeam, String guessedInput) throws URISyntaxException, IOException {
 
         if (word.getWord().equals(guessedInput)) { // if guess the word correct, move on to next round
 
@@ -938,7 +968,9 @@ public class PlayGame {
             // break playTheGame() loop
             wordToGuess = controlWord;
 
-            isGuessing = false; // no longer guessing
+            // no longer guessing current word
+            isGuessing = false;
+            isNextTeam = false;
 
         } else { // guessed the word wrong
 
@@ -952,7 +984,9 @@ public class PlayGame {
                 round.setSpinScore(0);
                 updateRoundDb();
 
-                isGuessing = true; // continue guessing
+                // spin and guess again
+                isGuessing = false;
+                isNextTeam = false;
 
             } else { // no token
 
@@ -967,10 +1001,11 @@ public class PlayGame {
                 updateRoundDb();
 
                 isGuessing = false; // no longer guessing
+                isNextTeam = true; // next team
             }
         }
 
-        return isGuessing;
+        return new boolean[]{isGuessing, isNextTeam};
     }
 
 //    private static void charInputManagement(int teamCounter) throws URISyntaxException, IOException {
@@ -1388,7 +1423,7 @@ public class PlayGame {
         System.out.println("=====");
     }
 
-    private static void nextTeamFunction(int teamCounter) throws URISyntaxException, IOException {
+    public static int nextTeamFunction(int teamCounter) throws URISyntaxException, IOException {
 
         updateTeamDb(); // update current team total score in DB
 
@@ -1396,6 +1431,7 @@ public class PlayGame {
         updateRoundDb(); // update current round with current team in DB
 
 //        System.out.println("teamList.size(): " + teamList.size());
+//        System.out.println("teamCounter: " + teamCounter);
 
         // get next team using teamCounter
         if (teamCounter + 1 < teamList.size()) {
@@ -1404,22 +1440,20 @@ public class PlayGame {
 
         } else {
             teamCounter = 0; // start at 0 index if next team turn is bigger than the teamList size
-//            System.out.println("resetting: " + teamCounter);
+            System.out.println("resetting: " + teamCounter);
         }
 
         // change team instance to next team by getting next team info from db
 //        System.out.println("teamCounter: " + teamCounter);
         getTeamByTeamId(teamList.get(teamCounter).getTeamId());
 
-        System.out.println();
-        System.out.println("Next contestant information: ");
-        printContestantInformation();
-
         // change round instance based on roundId teamID
         getRoundByRoundIdTeamId();
 
         // update game DB
         updateGameDb();
+
+        return teamCounter;
     }
 
     public static void setWordToGuess() {
@@ -1505,7 +1539,7 @@ public class PlayGame {
 //        System.out.println(wordToGuess.length() - 1);
     }
 
-    public static boolean spinTheWheel(Boolean isBankruptOrLoseTurn) throws IOException, URISyntaxException {
+    public static boolean[] spinTheWheel(boolean isGuessing, boolean isNextTeam) throws IOException, URISyntaxException {
 
         Random rand = new Random();
         String spinResultString = wheel.get(rand.nextInt(wheel.size()));
@@ -1532,7 +1566,9 @@ public class PlayGame {
                 round.setSpinToken(true);
                 updateRoundDb();
 
-                isBankruptOrLoseTurn = false; // move on to guessing
+                // move on to guessing
+                isNextTeam = false;
+                isGuessing = true;
 
             } else if (spinResultString == "LOSE A TURN") {
 
@@ -1545,19 +1581,21 @@ public class PlayGame {
                     round.setSpinToken(false);
                     updateRoundDb();
 
-                    isBankruptOrLoseTurn = false; // move on to guessing
+                    // move on to guessing
+                    isGuessing = true;
+                    isNextTeam = false;
 
                 } else { // no token
 
                     System.out.println();
                     System.out.println("How unfortunate... Your turn ended here. Better luck next time.");
-                    System.out.println("Your information:");
-                    printContestantInformation();
 
                     round.setSpinScore(0);
                     updateRoundDb();
 
-                    isBankruptOrLoseTurn = true;
+                    // next team
+                    isGuessing = false; // can't guess
+                    isNextTeam = true;
                 }
 
             } else if (spinResultString == "BANKRUPT") {
@@ -1571,21 +1609,22 @@ public class PlayGame {
                     round.setSpinToken(false);
                     updateRoundDb();
 
-                    isBankruptOrLoseTurn = false;
+                    // continue to guessing
+                    isGuessing = true;
+                    isNextTeam = false;
 
                 } else { // no token
 
                     System.out.println();
                     System.out.println("You spend too much money you went BANKRUPT. You lose all your money from this round. You are too broke to continue playing.");
-                    System.out.println("Your information:");
 
                     round.setSpinScore(0);
                     round.setRoundScore(0);
                     updateRoundDb();
 
-                    printContestantInformation();
-
-                    isBankruptOrLoseTurn = true;
+                    // next team
+                    isGuessing = false;
+                    isNextTeam = true;
                 }
             }
 
@@ -1598,9 +1637,13 @@ public class PlayGame {
 
             round.setSpinScore(spinResultInt);
             updateRoundDb();
+
+            // continue to guessing
+            isGuessing = true;
+            isNextTeam = false;
         }
 
-        return isBankruptOrLoseTurn;
+        return new boolean[]{isGuessing, isNextTeam};
     }
 }
 
