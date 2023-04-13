@@ -19,7 +19,6 @@ CREATE SEQUENCE round_seq
 
 drop sequence round_seq;
 
-drop sequence round_sequence;
 CREATE TABLE round (
 	round_id INTEGER NOT NULL,
 	team_id INTEGER NOT NULL,
@@ -35,7 +34,7 @@ CREATE TABLE round (
 INSERT INTO round (
 	round_id, team_id, game_id, round_score, spin_score, spin_token) 
 VALUES 
-	(nextval('round_sequence'), 1, 1, 0, 0, false);
+	(nextval('round_seq'), 1, 1, 0, 0, false);
 
 
 INSERT INTO round (
