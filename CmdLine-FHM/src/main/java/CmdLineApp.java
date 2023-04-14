@@ -22,7 +22,7 @@ public class CmdLineApp {
         PlayGame.addNewGame();
 
 
-        PlayGame.addContestant();
+//        PlayGame.addContestant();
 
 //        List<Integer> teamIds = new ArrayList() {{
 //            add(5);
@@ -35,9 +35,9 @@ public class CmdLineApp {
 //        PlayGame.updateGameDB();
 //        PlayGame.updateWordInGameDB();
 //        PlayGame.updateCurrentRoundInGameDB(2);
-//        PlayGame.setWordToGuess();
+//        PlayGame.processChosenWord();
 
-        PlayGame.playTheGame(0);
+//        PlayGame.playTheGame(0);
 //        PlayGame.updateRoundDb();
 //        PlayGame.getRoundByRoundIdTeamId();
 //        PlayGame.spinTheWheel();
