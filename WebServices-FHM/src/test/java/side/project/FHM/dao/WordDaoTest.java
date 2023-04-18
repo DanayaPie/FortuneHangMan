@@ -26,7 +26,7 @@ class WordDaoTest {
     void getALlWords_positive() {
 
         // when
-        Set<Word> actual = this.wordDaoUnderTest.getALlWords();
+        Set<Word> actual = wordDaoUnderTest.getALlWords();
 
         // then
         Word word1 = new Word(1, "FRUIT", "MANGO");
@@ -43,7 +43,7 @@ class WordDaoTest {
     @Sql("/test-delete-data.sql")
     void getALlWords_wordDoesNotExist_negative() {
 
-        Set<Word> actual = this.wordDaoUnderTest.getALlWords();
+        Set<Word> actual = wordDaoUnderTest.getALlWords();
         Set<Word> expected = new HashSet<>(); // empty set
 
         Assertions.assertEquals(expected, actual);
