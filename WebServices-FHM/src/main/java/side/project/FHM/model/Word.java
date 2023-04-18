@@ -21,7 +21,9 @@ public class Word {
     public Word() {
     }
 
-    public Word(int wordId) {
+    public Word(String category, String word) {
+        this.category = category;
+        this.word = word;
     }
 
     public Word(int wordId, String category, String word) {

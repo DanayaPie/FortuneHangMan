@@ -25,15 +25,10 @@ public class WordDao {
     public Set<Word> getALlWords() {
         logger.info("WordDao.getALlWords() invoked");
 
-        try {
-            List<Word> wordsList = entityManager.createQuery("FROM Word w", Word.class).getResultList();
-            Set<Word> wordsSet = new HashSet<>(wordsList);
+        List<Word> wordsList = entityManager.createQuery("FROM Word w", Word.class).getResultList();
+        Set<Word> wordsSet = new HashSet<>(wordsList);
 
-            return wordsSet;
-        } catch (NoResultException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return wordsSet;
     }
 
     @Transactional
@@ -62,27 +57,19 @@ public class WordDao {
     public List<Word> getWordsByCategory(String category) {
         logger.info("WordDao.getWordsInCategory() invoked");
 
-        try {
-            List<Word> wordsByCategory = entityManager.createQuery("FROM Word w WHERE w.category = :category", Word.class)
-                    .setParameter("category", category)
-                    .getResultList();
-            return wordsByCategory;
-        } catch (NoResultException e) {
-            return null;
-        }
+        List<Word> wordsByCategory = entityManager.createQuery("FROM Word w WHERE w.category = :category", Word.class)
+                .setParameter("category", category)
+                .getResultList();
+        return wordsByCategory;
     }
 
     @Transactional
     public List<String> getAllCategories() {
         logger.info("WordDao.getAllCategories() invoked");
 
-        try {
-            List<String> allCategories = entityManager.createQuery("SELECT DISTINCT(w.category) FROM Word w", String.class).getResultList();
+        List<String> allCategories = entityManager.createQuery("SELECT DISTINCT(w.category) FROM Word w", String.class).getResultList();
 
-            logger.debug("allCategories: {}", allCategories);
-            return allCategories;
-        } catch (NoResultException e) {
-            return null;
-        }
+        logger.debug("allCategories: {}", allCategories);
+        return allCategories;
     }
 }
