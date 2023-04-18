@@ -41,7 +41,7 @@ class WordDaoTest {
 
     @Test
     @Sql("/test-delete-data.sql")
-    void getALlWords_wordsDoesNotExist_negative() {
+    void getALlWords_wordDoesNotExist_negative() {
 
         Set<Word> actual = this.wordDaoUnderTest.getALlWords();
         Set<Word> expected = new HashSet<>(); // empty set
