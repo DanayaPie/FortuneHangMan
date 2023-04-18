@@ -45,6 +45,17 @@ public class Game {
     public Game() {
     }
 
+    public Game(String gameName, Integer roundId, Word word, String gameStatus, String letterGuessed, Integer currentTeamTurn, Integer currentRound, Integer totalTeam) {
+        this.gameName = gameName;
+        this.roundId = roundId;
+        this.word = word;
+        this.gameStatus = gameStatus;
+        this.letterGuessed = letterGuessed;
+        this.currentTeamTurn = currentTeamTurn;
+        this.currentRound = currentRound;
+        this.totalTeam = totalTeam;
+    }
+
     public Game(Integer gameId, String gameName, Integer roundId, Word word, String gameStatus, String letterGuessed, Integer currentTeamTurn, Integer currentRound, Integer totalTeam) {
         this.gameId = gameId;
         this.gameName = gameName;

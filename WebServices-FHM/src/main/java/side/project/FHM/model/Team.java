@@ -28,6 +28,13 @@ public class Team {
     public Team() {
     }
 
+    public Team(String teamName, int teamTurn, int gameId, int totalScore) {
+        this.teamName = teamName;
+        this.teamTurn = teamTurn;
+        this.gameId = gameId;
+        this.totalScore = totalScore;
+    }
+
     public Team(int teamId, String teamName, int teamTurn, int gameId, int totalScore) {
         this.teamId = teamId;
         this.teamName = teamName;

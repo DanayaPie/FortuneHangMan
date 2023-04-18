@@ -21,6 +21,11 @@ public class RoundId implements Serializable {
     public RoundId() {
     }
 
+    public RoundId(int teamId, int gameId) {
+        this.teamId = teamId;
+        this.gameId = gameId;
+    }
+
     public RoundId(long roundId, int teamId, int gameId) {
         this.roundId = roundId;
         this.teamId = teamId;
