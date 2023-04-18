@@ -9,7 +9,7 @@ VALUES
 INSERT INTO team
 	(team_name, team_turn, game_id, total_score)
 VALUES
-	('Dragon', 1, 1, 0),
+	('Shrek', 1, 1, 0),
 	('Donkey', 2, 1, 0);
 
 -- game
