@@ -61,6 +61,13 @@ class WordDaoTest {
     }
 
     @Test
+    void addWord_noWordInfo_negative() {
+
+        Word wordToAdd = new Word();
+        Assertions.assertThrows(DataIntegrityViolationException.class, () -> wordDaoUnderTest.addWord(wordToAdd));
+    }
+
+    @Test
     void addWord_missingCategory_negative() {
 
         Word wordToAdd = new Word("FRUIT", null);
@@ -91,10 +98,9 @@ class WordDaoTest {
     }
 
     @Test
-    @Sql("/test-delete-data.sql")
     void getWordByWordId_wordDoesNotExist_negative() {
 
-        Word actual = wordDaoUnderTest.getWordByWordId(1);
+        Word actual = wordDaoUnderTest.getWordByWordId(3);
         Assertions.assertNull(actual);
     }
 
@@ -112,10 +118,9 @@ class WordDaoTest {
     }
 
     @Test
-    @Sql("/test-delete-data.sql")
     void getWordsByCategory_categoryDoesNotExist_negative() {
 
-        List<Word> actual = wordDaoUnderTest.getWordsByCategory("FRUIT");
+        List<Word> actual = wordDaoUnderTest.getWordsByCategory("MUSIC");
         List<Word> expected = new ArrayList<>();
 
         Assertions.assertEquals(expected, actual);
