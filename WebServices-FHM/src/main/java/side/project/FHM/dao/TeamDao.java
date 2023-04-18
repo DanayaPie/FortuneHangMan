@@ -23,15 +23,9 @@ public class TeamDao {
     public List<Team> getAllTeams() {
         logger.info("TeamDao.getAllTeams() invoked");
 
-        try {
-            List<Team> teamToGet = entityManager.createQuery("FROM Team t", Team.class).getResultList();
+        List<Team> teamToGet = entityManager.createQuery("FROM Team t", Team.class).getResultList();
 
-            return teamToGet;
-        } catch (NoResultException e) {
-            e.printStackTrace();
-
-            return null;
-        }
+        return teamToGet;
     }
 
     @Transactional
@@ -68,13 +62,9 @@ public class TeamDao {
     public List<Team> getTeamsByGameId(int gameId) {
         logger.info("TeamDao.getTeamsByGameId() invoked");
 
-        try {
-            List<Team> teamsToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId ORDER BY t.teamTurn", Team.class)
-                    .setParameter("gameId", gameId)
-                    .getResultList();
-            return teamsToGet;
-        } catch (NoResultException e) {
-            return null;
-        }
+        List<Team> teamsToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId ORDER BY t.teamTurn", Team.class)
+                .setParameter("gameId", gameId)
+                .getResultList();
+        return teamsToGet;
     }
 }

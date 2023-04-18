@@ -25,14 +25,10 @@ public class RoundDao {
     public Set<Round> getAllRounds() {
         logger.info("RoundDao.getAllRounds() invoked");
 
-        try {
-            List<Round> rounds = entityManager.createQuery("FROM Round r", Round.class).getResultList();
-            Set<Round> roundsSet = new HashSet<>(rounds);
+        List<Round> rounds = entityManager.createQuery("FROM Round r", Round.class).getResultList();
+        Set<Round> roundsSet = new HashSet<>(rounds);
 
-            return roundsSet;
-        } catch (NoResultException e) {
-            return null;
-        }
+        return roundsSet;
     }
 
     @Transactional
@@ -47,15 +43,10 @@ public class RoundDao {
     public List<Round> getRoundsByRoundId(long roundId) {
         logger.info("RoundDao.getRoundsByRoundId() invoked");
 
-        try {
-            List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId", Round.class)
-                    .setParameter("roundId", roundId)
-                    .getResultList();
-            return roundsToGet;
-
-        } catch (NoResultException e) {
-            return null;
-        }
+        List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId", Round.class)
+                .setParameter("roundId", roundId)
+                .getResultList();
+        return roundsToGet;
     }
 
     @Transactional
@@ -78,16 +69,12 @@ public class RoundDao {
     public List<Round> getRoundsByRoundIdGameId(long roundId, int gameId) {
         logger.info("RoundDao.getRoundsByRoundIdGameId() invoked");
 
-        try {
-            List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
-                            + " AND r.roundId.gameId = :gameId", Round.class)
-                    .setParameter("roundId", roundId)
-                    .setParameter("gameId", gameId)
-                    .getResultList();
-            return roundsToGet;
-        } catch (NoResultException e) {
-            return null;
-        }
+        List<Round> roundsToGet = entityManager.createQuery("FROM Round r WHERE r.roundId.roundId = :roundId"
+                        + " AND r.roundId.gameId = :gameId", Round.class)
+                .setParameter("roundId", roundId)
+                .setParameter("gameId", gameId)
+                .getResultList();
+        return roundsToGet;
     }
 
     @Transactional

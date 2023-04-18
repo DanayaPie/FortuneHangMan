@@ -23,15 +23,8 @@ public class GameDao {
     public List<Game> getAllGames() {
         logger.info("GameDao.getAllGame() invoked");
 
-        try {
-            List<Game> allGames = entityManager.createQuery("FROM Game g").getResultList();
-            return allGames;
-
-        } catch (NoResultException e) {
-            e.printStackTrace();
-            return null;
-        }
-
+        List<Game> allGames = entityManager.createQuery("FROM Game g").getResultList();
+        return allGames;
     }
 
     @Transactional
