@@ -1,0 +1,52 @@
+---- DOES NOT NEED TO CREATE TABLE -> USE jpa.hibernate.ddl-auto
+--
+---- word
+--CREATE TABLE word (
+--	word_id SERIAL PRIMARY KEY,
+--	category VARCHAR(300) NOT NULL,
+--	word VARCHAR(500) NOT NULL
+--);
+--
+---- team
+--CREATE TABLE team (
+--	team_id SERIAL PRIMARY KEY,
+--	team_name VARCHAR(255) NOT NULL,
+--	team_turn INTEGER NOT NULL,
+--	game_id INTEGER,
+--	total_score INTEGER NOT NULL
+--);
+--
+---- game
+--CREATE TABLE game (
+--	game_id SERIAL PRIMARY KEY,
+--	game_name VARCHAR(100) NOT NULL,
+--	round_id INTEGER,
+--	word_id INTEGER,
+--	game_status VARCHAR(300) NOT NULL,
+--	letter_guessed VARCHAR(26),
+--	current_team_turn INTEGER,
+--	current_round INTEGER,
+--	total_team INTEGER NOT NULL,
+--	CONSTRAINT wordid_fk FOREIGN KEY (word_id) REFERENCES word(word_id)
+--);
+--
+---- round
+--CREATE SEQUENCE round_seq
+--	AS int
+--	START WITH 1
+--	INCREMENT BY 1;
+--
+--CREATE TABLE round (
+--	round_id INTEGER NOT NULL,
+--	team_id INTEGER NOT NULL,
+--	game_id Integer NOT NULL,
+--	round_score INTEGER NOT NULL,
+--	spin_score INTEGER NOT NULL,
+--	spin_token BOOLEAN NOT NULL,
+--	PRIMARY KEY(round_id,team_id,game_id),
+--	CONSTRAINT teamid_fk FOREIGN KEY (team_id) REFERENCES team(team_id),
+--	CONSTRAINT gameid_fk FOREIGN KEY (game_id) REFERENCES game(game_id)
+--);
+--
+--
+
