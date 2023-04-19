@@ -6,6 +6,7 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import side.project.FHM.model.Round;
 
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
+@Primary
 public class RoundDao {
 
     private Logger logger = LoggerFactory.getLogger(RoundDao.class);
@@ -88,7 +90,7 @@ public class RoundDao {
     public Long getSequenceId() {
         logger.info("RoundDao.getSequenceId() invoked");
 
-        Long roundSeqId = (Long) entityManager.createNativeQuery("SELECT nextval('fhm.round_seq') ").getSingleResult();
+        Long roundSeqId = (Long) entityManager.createNativeQuery("SELECT nextval('fhm.round_seq')").getSingleResult();
         return roundSeqId;
     }
 }

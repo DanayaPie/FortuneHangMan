@@ -24,13 +24,7 @@ public class Round {
     public Round() {
     }
 
-    public Round(int roundScore, int spinScore, boolean spinToken) {
-        this.roundScore = roundScore;
-        this.spinScore = spinScore;
-        this.spinToken = spinToken;
-    }
-
-    public Round(RoundId roundId, int teamId, int gameId, int roundScore, int spinScore, boolean spinToken) {
+    public Round(RoundId roundId, int roundScore, int spinScore, boolean spinToken) {
         this.roundId = roundId;
         this.roundScore = roundScore;
         this.spinScore = spinScore;
