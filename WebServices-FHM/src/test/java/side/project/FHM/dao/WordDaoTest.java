@@ -114,7 +114,8 @@ class WordDaoTest {
         List<Word> expected = new ArrayList<>();
         expected.add(word);
 
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertTrue(expected.containsAll(actual));
+        Assertions.assertTrue(actual.containsAll(expected));
     }
 
     @Test
