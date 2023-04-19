@@ -14,9 +14,9 @@ VALUES
 
 -- game
 INSERT INTO game (
-	game_name, round_id, word_id, game_status, current_team_turn, current_round, total_team
+	game_name, round_id, word_id, game_status, letter_guessed, current_team_turn, current_round, total_team
 ) VALUES
-	('test', 0, 1, 'started', 1, 1, 4);
+	('test', 1, null, 'STARTED', null, 1, 1, 2);
 
 -- round
 INSERT INTO round (
