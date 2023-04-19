@@ -41,9 +41,7 @@ class TeamDaoTest {
     void getAllTeams_teamDoesNotExist_negative() {
 
         List<Team> actual = teamDaoUnderTest.getAllTeams();
-        List<Team> expected = new ArrayList<>();
-
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertNull(actual);
     }
 
     @Test
@@ -140,8 +138,6 @@ class TeamDaoTest {
     void getTeamsByGameId_teamDoesNotExist_negative() {
 
         List<Team> actual = teamDaoUnderTest.getTeamsByGameId(2);
-        List<Team> expected = new ArrayList<>();
-
-        Assertions.assertEquals(expected, actual);
+        Assertions.assertNull(actual);
     }
 }
