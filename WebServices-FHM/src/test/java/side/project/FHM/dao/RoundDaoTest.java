@@ -22,11 +22,11 @@ import java.util.Set;
 class RoundDaoTest {
 
     @Autowired
-    RoundDao roundDaoUnderTest;
+    private RoundDao roundDaoUnderTest;
 
     @Autowired
     @Qualifier("RoundDaoTest")
-    RoundSeqDaoForTesting testRoundDaoUnderTest;
+    private RoundSeqDaoForTesting testRoundDaoUnderTest;
 
     @Test
     void getAllRounds_positive() {

@@ -24,6 +24,10 @@ public class WordService {
     @Autowired
     private WordDao wordDao;
 
+    // For mocking and unit testing
+    public WordService(WordDao wordDao) {
+    }
+
     public Set<Word> getAllWords() throws WordDoesNotExist, InvalidParameterException {
         logger.info("WordService.getAllWords() invoked");
 

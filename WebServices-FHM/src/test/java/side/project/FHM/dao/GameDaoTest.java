@@ -19,7 +19,7 @@ import java.util.List;
 class GameDaoTest {
 
     @Autowired
-    GameDao gameDaoUnderTest;
+    private GameDao gameDaoUnderTest;
 
     @Test
     void getAllGames_positive() {
