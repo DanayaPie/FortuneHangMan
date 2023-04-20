@@ -24,7 +24,6 @@ public class WordService {
     @Autowired
     private WordDao wordDao;
 
-    // For mocking and unit testing
     public WordService(WordDao wordDao) {
     }
 

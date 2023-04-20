@@ -15,7 +15,7 @@ import java.util.List;
 @SpringBootTest
 @Sql("/test-data.sql")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class TeamDaoTest {
+class TeamDaoUnitTest {
 
     @Autowired
     private TeamDao teamDaoUnderTest;

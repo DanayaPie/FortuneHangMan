@@ -19,7 +19,7 @@ import java.util.Set;
 @SpringBootTest
 @Sql("/test-data.sql")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class RoundDaoTest {
+class RoundDaoUnitTest {
 
     @Autowired
     private RoundDao roundDaoUnderTest;
