@@ -28,12 +28,7 @@ public class TeamController {
         logger.info("TeamController.getAllTeams() invoked");
 
         try {
-
             List<Team> allTeams = teamService.getAllTeams();
-
-            if (allTeams.isEmpty()) {
-                throw new TeamDoesNotExistException("No teams on file.");
-            }
             return ResponseEntity.status(200).body(allTeams);
 
         } catch (TeamDoesNotExistException e) {
@@ -51,6 +46,7 @@ public class TeamController {
             return ResponseEntity.status(200).body(teamToAdd);
 
         } catch (InvalidParameterException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -63,7 +59,8 @@ public class TeamController {
             Team teamToGet = teamService.getTeamByTeamId(teamId);
             return ResponseEntity.status(200).body(teamToGet);
 
-        } catch (InvalidParameterException | TeamDoesNotExistException e) {
+        } catch (TeamDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -79,6 +76,7 @@ public class TeamController {
             return ResponseEntity.status(200).body(teamToUpdate);
 
         } catch (InvalidParameterException | TeamDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -90,7 +88,9 @@ public class TeamController {
         try {
             List<Team> teamsToGet = teamService.getTeamsByGameId(gameId);
             return ResponseEntity.status(200).body(teamsToGet);
-        } catch (InvalidParameterException e) {
+
+        } catch (TeamDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

@@ -41,7 +41,10 @@ class TeamDaoUnitTest {
     void getAllTeams_teamDoesNotExist_negative() {
 
         List<Team> actual = teamDaoUnderTest.getAllTeams();
-        Assertions.assertNull(actual);
+        List<Team> expected = new ArrayList<>();
+
+        Assertions.assertTrue(expected.containsAll(actual));
+        Assertions.assertTrue(actual.containsAll(expected));
     }
 
     @Test
@@ -72,9 +75,10 @@ class TeamDaoUnitTest {
     }
 
     @Test
+    @Sql("/test-delete-data.sql")
     void getTeamByTeamId_teamDoesNotExist_negative() {
 
-        Team actual = teamDaoUnderTest.getTeamByTeamId(3);
+        Team actual = teamDaoUnderTest.getTeamByTeamId(1);
         Assertions.assertNull(actual);
     }
 
@@ -135,9 +139,13 @@ class TeamDaoUnitTest {
     }
 
     @Test
+    @Sql("/test-delete-data.sql")
     void getTeamsByGameId_teamDoesNotExist_negative() {
 
-        List<Team> actual = teamDaoUnderTest.getTeamsByGameId(2);
-        Assertions.assertNull(actual);
+        List<Team> actual = teamDaoUnderTest.getTeamsByGameId(1);
+        List<Team> expected = new ArrayList<>();
+
+        Assertions.assertTrue(expected.containsAll(actual));
+        Assertions.assertTrue(actual.containsAll(expected));
     }
 }
