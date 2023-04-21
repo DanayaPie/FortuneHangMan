@@ -6,14 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.TeamDoesNotExist;
+import side.project.FHM.exception.TeamDoesNotExistException;
 import side.project.FHM.model.Team;
 import side.project.FHM.service.TeamService;
 
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"}, maxAge = 3600)
 @RestController
 public class TeamController {
 
@@ -28,10 +28,16 @@ public class TeamController {
         logger.info("TeamController.getAllTeams() invoked");
 
         try {
+
             List<Team> allTeams = teamService.getAllTeams();
+
+            if (allTeams.isEmpty()) {
+                throw new TeamDoesNotExistException("No teams on file.");
+            }
             return ResponseEntity.status(200).body(allTeams);
 
-        } catch (InvalidParameterException | TeamDoesNotExist e) {
+        } catch (TeamDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -57,7 +63,7 @@ public class TeamController {
             Team teamToGet = teamService.getTeamByTeamId(teamId);
             return ResponseEntity.status(200).body(teamToGet);
 
-        } catch (InvalidParameterException | TeamDoesNotExist e) {
+        } catch (InvalidParameterException | TeamDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -72,7 +78,7 @@ public class TeamController {
                     , json.get("totalScore"));
             return ResponseEntity.status(200).body(teamToUpdate);
 
-        } catch (InvalidParameterException | TeamDoesNotExist e) {
+        } catch (InvalidParameterException | TeamDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

@@ -7,8 +7,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import side.project.FHM.dao.RoundDao;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.RoundDoesNotExist;
-import side.project.FHM.exception.TeamDoesNotExist;
+import side.project.FHM.exception.RoundDoesNotExistException;
+import side.project.FHM.exception.TeamDoesNotExistException;
 import side.project.FHM.model.Round;
 import side.project.FHM.model.RoundId;
 import side.project.FHM.utility.ValidateRound;
@@ -31,14 +31,14 @@ public class RoundService {
     @Autowired
     private GameService gameService;
 
-    public Set<Round> getAllRounds() throws RoundDoesNotExist, InvalidParameterException {
+    public Set<Round> getAllRounds() throws RoundDoesNotExistException, InvalidParameterException {
         logger.info("RoundService.getAllRounds() invoked");
 
         Set<Round> rounds = roundDao.getAllRounds();
 
         try {
             if (rounds.isEmpty()) {
-                throw new RoundDoesNotExist("No rounds on file.");
+                throw new RoundDoesNotExistException("No rounds on file.");
             }
 
             return rounds;
@@ -47,7 +47,7 @@ public class RoundService {
         }
     }
 
-    public List<Round> addRound(List<Integer> teamIds, Integer gameId) throws InvalidParameterException, TeamDoesNotExist {
+    public List<Round> addRound(List<Integer> teamIds, Integer gameId) throws InvalidParameterException, TeamDoesNotExistException {
         logger.info("RoundService.addRound() invoked");
         logger.debug("sequence [{}]", roundDao.getSequenceId());
 

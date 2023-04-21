@@ -6,8 +6,10 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import side.project.FHM.exception.CategoryDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.WordDoesNotExist;
+import side.project.FHM.exception.WordAlreadyExistException;
+import side.project.FHM.exception.WordDoesNotExistException;
 import side.project.FHM.model.Word;
 import side.project.FHM.service.WordService;
 
@@ -16,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"}, maxAge = 3600)
 @RestController
 public class WordController implements InitializingBean {
 
@@ -26,7 +28,6 @@ public class WordController implements InitializingBean {
     @Autowired
     private WordService wordService;
 
-
     @GetMapping(path = "/word")
     public ResponseEntity<Object> getAllWords() {
         logger.info("WordController.getAllWords() invoked");
@@ -35,7 +36,8 @@ public class WordController implements InitializingBean {
             Set<Word> allWords = wordService.getAllWords();
             return ResponseEntity.status(200).body(allWords);
 
-        } catch (WordDoesNotExist | InvalidParameterException e) {
+        } catch (WordDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -48,7 +50,8 @@ public class WordController implements InitializingBean {
             Word wordToAdd = wordService.addWord(wordsInDb, json.get("category"), json.get("word"));
             return ResponseEntity.status(200).body(wordToAdd);
 
-        } catch (InvalidParameterException | WordDoesNotExist e) {
+        } catch (InvalidParameterException | WordAlreadyExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -61,7 +64,8 @@ public class WordController implements InitializingBean {
             Word wordToGet = wordService.getWordByWordId(wordId);
             return ResponseEntity.status(200).body(wordToGet);
 
-        } catch (InvalidParameterException | WordDoesNotExist e) {
+        } catch (WordDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -74,7 +78,7 @@ public class WordController implements InitializingBean {
             Word randomWord = wordService.getRandomWordByCategory(category);
             return ResponseEntity.status(200).body(randomWord);
 
-        } catch (InvalidParameterException | WordDoesNotExist e) {
+        } catch (InvalidParameterException | CategoryDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -87,7 +91,7 @@ public class WordController implements InitializingBean {
             List<String> allCategories = wordService.getAllCategories();
             return ResponseEntity.status(200).body(allCategories);
 
-        } catch (InvalidParameterException e) {
+        } catch (CategoryDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -96,7 +100,7 @@ public class WordController implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         try {
             wordsInDb = wordService.getAllWords();
-        } catch (WordDoesNotExist | InvalidParameterException e) {
+        } catch (WordDoesNotExistException e) {
             e.getMessage();
         }
     }

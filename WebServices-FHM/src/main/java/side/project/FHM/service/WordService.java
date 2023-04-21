@@ -3,12 +3,12 @@ package side.project.FHM.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import side.project.FHM.dao.WordDao;
-import side.project.FHM.exception.CategoryDoesNotExist;
+import side.project.FHM.exception.CategoryDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.WordDoesNotExist;
+import side.project.FHM.exception.WordAlreadyExistException;
+import side.project.FHM.exception.WordDoesNotExistException;
 import side.project.FHM.model.Word;
 import side.project.FHM.utility.ValidateWord;
 
@@ -27,22 +27,19 @@ public class WordService {
     public WordService(WordDao wordDao) {
     }
 
-    public Set<Word> getAllWords() throws WordDoesNotExist, InvalidParameterException {
+    public Set<Word> getAllWords() throws WordDoesNotExistException {
         logger.info("WordService.getAllWords() invoked");
 
-        Set<Word> words = wordDao.getALlWords();
+        Set<Word> allWords = wordDao.getALlWords();
 
-        try {
-            if (words.isEmpty()) {
-                throw new WordDoesNotExist("No words on file.");
-            }
-            return words;
-        } catch (DataAccessException e) {
-            throw new InvalidParameterException("No words on file.");
+        if (allWords.isEmpty()) {
+            throw new WordDoesNotExistException("No words on file.");
+        } else {
+            return allWords;
         }
     }
 
-    public Word addWord(Set<Word> wordInDb, String category, String word) throws InvalidParameterException, WordDoesNotExist {
+    public Word addWord(Set<Word> wordInDb, String category, String word) throws InvalidParameterException, WordAlreadyExistException {
         logger.info("WordService.addWord() invoked");
 
         String categoryCaps = category.trim().toUpperCase();
@@ -60,41 +57,31 @@ public class WordService {
         logger.debug("wordToAdd {} " + wordToAdd);
 
         // if word already exist in the category, dont add the word
-        try {
-            if (!wordInDb.contains(wordToAdd)) {
-                logger.debug("wordInDb not contains wordToAdd");
+        if (!wordInDb.contains(wordToAdd)) {
+            logger.debug("wordInDb not contains wordToAdd");
 
-                Word addedWord = wordDao.addWord(wordToAdd);
-                wordInDb.add(wordToAdd);
+            Word addedWord = wordDao.addWord(wordToAdd);
+            wordInDb.add(wordToAdd);
 
-                return addedWord;
-            } else {
-                throw new InvalidParameterException(wordCaps + " already exist in " + categoryCaps);
-
-            }
-        } catch (DataAccessException e) {
-            throw new InvalidParameterException(wordCaps + " already exist in " + categoryCaps);
-
+            return addedWord;
+        } else {
+            throw new WordAlreadyExistException(wordCaps + " already exist in " + categoryCaps);
         }
     }
 
-    public Word getWordByWordId(int wordId) throws InvalidParameterException, WordDoesNotExist {
+    public Word getWordByWordId(int wordId) throws WordDoesNotExistException {
         logger.info("WordService.getWordByWordId() invoked");
 
         Word wordToGet = wordDao.getWordByWordId(wordId);
 
-        try {
-            if (wordToGet == null) {
-                throw new WordDoesNotExist("No word with the word ID of " + wordId);
-            }
+        if (wordToGet == null) {
+            throw new WordDoesNotExistException("No word with the word ID of " + wordId);
+        } else {
             return wordToGet;
-
-        } catch (DataAccessException e) {
-            throw new InvalidParameterException("No word with the word ID of " + wordId);
         }
     }
 
-    public Word getRandomWordByCategory(String category) throws WordDoesNotExist, InvalidParameterException {
+    public Word getRandomWordByCategory(String category) throws InvalidParameterException, CategoryDoesNotExistException {
         logger.info("WordService.getRandomWordByCategory() invoked");
 
         String categoryCaps = category.trim().toUpperCase();
@@ -102,33 +89,25 @@ public class WordService {
 
         List<Word> wordsInCategory = wordDao.getWordsByCategory(categoryCaps);
 
-        logger.debug("wordsIncategory {}" + wordsInCategory);
-        try {
-            if (!wordsInCategory.isEmpty()) {
-                Random rand = new Random();
-                Word randomWord = wordsInCategory.get(rand.nextInt(wordsInCategory.size()));
-                return randomWord;
-            }
-            throw new WordDoesNotExist(categoryCaps + " category does not exist.");
-
-        } catch (DataAccessException e) {
-            throw new InvalidParameterException(categoryCaps + " category does not exist.");
-
+        logger.debug("wordsInCategory {}" + wordsInCategory);
+        if (!wordsInCategory.isEmpty()) {
+            Random rand = new Random();
+            Word randomWord = wordsInCategory.get(rand.nextInt(wordsInCategory.size()));
+            return randomWord;
+        } else {
+            throw new CategoryDoesNotExistException(categoryCaps + " category does not exist.");
         }
     }
 
-    public List<String> getAllCategories() throws InvalidParameterException {
+    public List<String> getAllCategories() throws CategoryDoesNotExistException {
         logger.info("WordService.getAllCategories() invoked");
 
         List<String> allCategories = wordDao.getAllCategories();
 
-        try {
-            if (allCategories.isEmpty()) {
-                throw new CategoryDoesNotExist("No categories on file.");
-            }
+        if (allCategories.isEmpty()) {
+            throw new CategoryDoesNotExistException("No categories on file.");
+        } else {
             return allCategories;
-        } catch (DataAccessException | CategoryDoesNotExist e) {
-            throw new InvalidParameterException("No categories on file.");
         }
     }
 }

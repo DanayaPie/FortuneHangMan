@@ -6,10 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import side.project.FHM.dao.GameDao;
-import side.project.FHM.exception.GamesDoesNotExist;
+import side.project.FHM.exception.GamesDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.TeamDoesNotExist;
-import side.project.FHM.exception.WordDoesNotExist;
+import side.project.FHM.exception.TeamDoesNotExistException;
+import side.project.FHM.exception.WordDoesNotExistException;
 import side.project.FHM.model.Game;
 import side.project.FHM.model.Word;
 import side.project.FHM.utility.ValidateGame;
@@ -31,14 +31,14 @@ public class GameService {
     @Autowired
     private TeamService teamService;
 
-    public List<Game> getAllGames() throws GamesDoesNotExist, InvalidParameterException {
+    public List<Game> getAllGames() throws GamesDoesNotExistException, InvalidParameterException {
         logger.info("GameService.getAllGames() invoked");
 
         List<Game> allGames = gameDao.getAllGames();
 
         try {
             if (allGames.isEmpty()) {
-                throw new GamesDoesNotExist("No games on file.");
+                throw new GamesDoesNotExistException("No games on file.");
             }
             return allGames;
 
@@ -90,7 +90,7 @@ public class GameService {
         }
     }
 
-    public Game updateGameByGameId(int gameId, String roundId, String wordId, String gameStatus, String letterGuessed, String currentTeamTurn, String currentRound) throws InvalidParameterException, WordDoesNotExist, TeamDoesNotExist {
+    public Game updateGameByGameId(int gameId, String roundId, String wordId, String gameStatus, String letterGuessed, String currentTeamTurn, String currentRound) throws InvalidParameterException, WordDoesNotExistException, TeamDoesNotExistException {
         logger.info("GameService.updateGameByGameId() invoked");
 
         Game gameToUpdate = getGameByGameId(gameId);

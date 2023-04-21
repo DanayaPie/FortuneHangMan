@@ -5,10 +5,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import side.project.FHM.exception.GamesDoesNotExist;
+import side.project.FHM.exception.GamesDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.TeamDoesNotExist;
-import side.project.FHM.exception.WordDoesNotExist;
+import side.project.FHM.exception.TeamDoesNotExistException;
+import side.project.FHM.exception.WordDoesNotExistException;
 import side.project.FHM.model.Game;
 import side.project.FHM.service.GameService;
 
@@ -33,7 +33,7 @@ public class GameController {
             List<Game> allGames = gameService.getAllGames();
             return ResponseEntity.status(200).body(allGames);
 
-        } catch (InvalidParameterException | GamesDoesNotExist e) {
+        } catch (InvalidParameterException | GamesDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -79,7 +79,7 @@ public class GameController {
                     , json.get("currentRound"));
             return ResponseEntity.status(200).body(gameToUpdate);
 
-        } catch (InvalidParameterException | WordDoesNotExist | TeamDoesNotExist e) {
+        } catch (InvalidParameterException | WordDoesNotExistException | TeamDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

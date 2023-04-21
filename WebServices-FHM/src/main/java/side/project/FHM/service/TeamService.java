@@ -7,7 +7,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import side.project.FHM.dao.TeamDao;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.TeamDoesNotExist;
+import side.project.FHM.exception.TeamDoesNotExistException;
 import side.project.FHM.model.Team;
 import side.project.FHM.utility.ValidateTeam;
 
@@ -21,20 +21,11 @@ public class TeamService {
     @Autowired
     private TeamDao teamDao;
 
-    public List<Team> getAllTeams() throws TeamDoesNotExist, InvalidParameterException {
+    public List<Team> getAllTeams() throws TeamDoesNotExistException {
         logger.info("TeamService.getAllTeams() invoked");
 
         List<Team> teams = this.teamDao.getAllTeams();
-
-        try {
-            if (teams.isEmpty()) {
-                throw new TeamDoesNotExist("No teams on file.");
-            }
-            return teams;
-
-        } catch (DataAccessException e) {
-            throw new InvalidParameterException("No teams on file.");
-        }
+        return teams;
     }
 
     public Team addTeam(String teamName, String teamTurn, String gameId) throws InvalidParameterException {
@@ -90,14 +81,14 @@ public class TeamService {
         return addedTeam;
     }
 
-    public Team getTeamByTeamId(int teamId) throws TeamDoesNotExist, InvalidParameterException {
+    public Team getTeamByTeamId(int teamId) throws TeamDoesNotExistException, InvalidParameterException {
         logger.info("TeamService.getTeamByTeamId() invoked");
 
         Team teamToGet = this.teamDao.getTeamByTeamId(teamId);
 
         try {
             if (teamToGet == null) {
-                throw new TeamDoesNotExist("No team with the team ID of " + teamId);
+                throw new TeamDoesNotExistException("No team with the team ID of " + teamId);
             }
             return teamToGet;
         } catch (DataAccessException e) {
@@ -105,7 +96,7 @@ public class TeamService {
         }
     }
 
-    public Team updateTeamByTeamId(int teamId, String gameId, String totalScore) throws InvalidParameterException, TeamDoesNotExist {
+    public Team updateTeamByTeamId(int teamId, String gameId, String totalScore) throws InvalidParameterException, TeamDoesNotExistException {
         logger.info("TeamService.updateTeamByTeamId() invoked");
 
         Team teamToUpdate = getTeamByTeamId(teamId);
@@ -166,10 +157,10 @@ public class TeamService {
 
         try {
             if (teamsToGet.isEmpty()) {
-                throw new TeamDoesNotExist("No teams with the game ID of " + gameId);
+                throw new TeamDoesNotExistException("No teams with the game ID of " + gameId);
             }
             return teamsToGet;
-        } catch (DataAccessException | TeamDoesNotExist e) {
+        } catch (DataAccessException | TeamDoesNotExistException e) {
             throw new InvalidParameterException("No teams with the game ID of " + gameId);
         }
     }

@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import side.project.FHM.exception.InvalidParameterException;
-import side.project.FHM.exception.RoundDoesNotExist;
-import side.project.FHM.exception.TeamDoesNotExist;
+import side.project.FHM.exception.RoundDoesNotExistException;
+import side.project.FHM.exception.TeamDoesNotExistException;
 import side.project.FHM.model.Round;
 import side.project.FHM.service.RoundService;
 
@@ -35,7 +35,7 @@ public class RoundController {
             Set<Round> allRounds = roundService.getAllRounds();
             return ResponseEntity.status(200).body(allRounds);
 
-        } catch (InvalidParameterException | RoundDoesNotExist e) {
+        } catch (InvalidParameterException | RoundDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -57,7 +57,7 @@ public class RoundController {
             List<Round> roundsToAdd = roundService.addRound(teamIds, jsonObj.getInt("gameId"));
             return ResponseEntity.status(200).body(roundsToAdd);
 
-        } catch (InvalidParameterException | TeamDoesNotExist e) {
+        } catch (InvalidParameterException | TeamDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
