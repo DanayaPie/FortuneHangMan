@@ -98,9 +98,10 @@ class WordDaoUnitTest {
     }
 
     @Test
+    @Sql("/test-delete-data.sql")
     void getWordByWordId_wordDoesNotExist_negative() {
 
-        Word actual = wordDaoUnderTest.getWordByWordId(3);
+        Word actual = wordDaoUnderTest.getWordByWordId(1);
         Assertions.assertNull(actual);
     }
 
@@ -119,9 +120,10 @@ class WordDaoUnitTest {
     }
 
     @Test
+    @Sql("/test-delete-data.sql")
     void getWordsByCategory_categoryDoesNotExist_negative() {
 
-        List<Word> actual = wordDaoUnderTest.getWordsByCategory("MUSIC");
+        List<Word> actual = wordDaoUnderTest.getWordsByCategory("FRUIT");
         List<Word> expected = new ArrayList<>();
 
         Assertions.assertEquals(expected, actual);
