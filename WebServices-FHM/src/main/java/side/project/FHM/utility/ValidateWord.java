@@ -36,7 +36,7 @@ public class ValidateWord {
         }
 
         if (wordBlankErrorBoolean) {
-            wordBlankErrorString.append(" cannot be blank and can only contain letters.");
+            wordBlankErrorString.append(" cannot be blank.");
             throw new InvalidParameterException(wordBlankErrorString.toString());
         }
     }
