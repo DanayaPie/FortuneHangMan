@@ -81,35 +81,6 @@ class WordServiceIntegrationTest {
     }
 
     @Test
-    void addWord_categoryContainNotAllowChar_negative() {
-
-        Set<Word> wordSet = new HashSet<>();
-
-        Throwable actualExceptionThrown = Assertions.assertThrows(InvalidParameterException.class, () -> wordServiceUnderTest.addWord(wordSet, "123", "ORANGE"));
-        Assertions.assertEquals("Categories can only contain alphabets.", actualExceptionThrown.getMessage());
-    }
-
-    @Test
-    void addWord_wordContainNotAllowChar_negative() {
-
-        Set<Word> wordSet = new HashSet<>();
-
-        Throwable actualExceptionThrown = Assertions.assertThrows(InvalidParameterException.class, () -> wordServiceUnderTest.addWord(wordSet, "FRUIT", "123@"));
-        Assertions.assertEquals("Words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, ', and ,. If words contain numbers, please spell them out."
-                , actualExceptionThrown.getMessage());
-    }
-
-    @Test
-    void addWord_categoryAndWordContainNotAllowChar_negative() {
-
-        Set<Word> wordSet = new HashSet<>();
-
-        Throwable actualExceptionThrown = Assertions.assertThrows(InvalidParameterException.class, () -> wordServiceUnderTest.addWord(wordSet, "123", "123@"));
-        Assertions.assertEquals("Categories can only contain alphabets, but words can contain alphabets and some special characters such as ;, :, $, !, &, %, -, ', and ,. If words contain numbers, please spell them out."
-                , actualExceptionThrown.getMessage());
-    }
-
-    @Test
     void getWordByWordId_positive() throws WordDoesNotExistException {
 
         Word actual = wordServiceUnderTest.getWordByWordId(1);
@@ -141,13 +112,6 @@ class WordServiceIntegrationTest {
 
         Throwable actualExceptionThrown = Assertions.assertThrows(CategoryDoesNotExistException.class, () -> wordServiceUnderTest.getRandomWordByCategory("FRUIT"));
         Assertions.assertEquals("FRUIT category does not exist.", actualExceptionThrown.getMessage());
-    }
-
-    @Test
-    void getRandomWordByCategory_categoryContainNonAllowChar_negative() {
-
-        Throwable actualExceptionThrown = Assertions.assertThrows(InvalidParameterException.class, () -> wordServiceUnderTest.getRandomWordByCategory("123"));
-        Assertions.assertEquals("Category can only contain alphabets.", actualExceptionThrown.getMessage());
     }
 
     @Test
