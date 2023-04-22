@@ -94,4 +94,18 @@ public class TeamController {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
+
+    @GetMapping(path = "/team/gameTeamTurn/{gameId}/{teamTurn}")
+    public ResponseEntity<Object> getTeamsByGameIdTeamTurn(@PathVariable(value = "gameId") int gameId, @PathVariable(value = "teamTurn") int teamTurn) {
+        logger.info("TeamController.getTeamsByGameIdTeamTurn() invoked");
+
+        try {
+            Team teamsToGet = teamService.getTeamsByGameIdCurrentTeamTurn(gameId, teamTurn);
+            return ResponseEntity.status(200).body(teamsToGet);
+
+        } catch (TeamDoesNotExistException | InvalidParameterException e) {
+            e.getStackTrace();
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
 }

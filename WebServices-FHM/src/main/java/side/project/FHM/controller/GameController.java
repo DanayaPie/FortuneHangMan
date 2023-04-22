@@ -15,7 +15,7 @@ import side.project.FHM.service.GameService;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"}, maxAge = 3600)
 @RestController
 public class GameController {
 
@@ -33,7 +33,7 @@ public class GameController {
             List<Game> allGames = gameService.getAllGames();
             return ResponseEntity.status(200).body(allGames);
 
-        } catch (InvalidParameterException | GamesDoesNotExistException e) {
+        } catch (GamesDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -59,7 +59,7 @@ public class GameController {
             Game gameToGet = gameService.getGameByGameId(gameId);
             return ResponseEntity.status(200).body(gameToGet);
 
-        } catch (InvalidParameterException e) {
+        } catch (GamesDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -79,10 +79,8 @@ public class GameController {
                     , json.get("currentRound"));
             return ResponseEntity.status(200).body(gameToUpdate);
 
-        } catch (InvalidParameterException | WordDoesNotExistException | TeamDoesNotExistException e) {
+        } catch (InvalidParameterException | WordDoesNotExistException | TeamDoesNotExistException | GamesDoesNotExistException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
-
-
 }

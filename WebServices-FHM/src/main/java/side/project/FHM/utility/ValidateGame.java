@@ -1,5 +1,6 @@
 package side.project.FHM.utility;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,31 @@ public class ValidateGame {
         }
     }
 
+    public static void gameNameAndTotalTeamBlank(String gameName, String totalTeam) throws InvalidParameterException {
+        logger.info("ValidateGame.gameNameAndTotalTeamBlank() invoked");
 
+        boolean gameBlankErrorBoolean = false;
+        StringBuilder gameBlankErrorString = new StringBuilder();
+
+        if (StringUtils.isBlank(gameName)) {
+            gameBlankErrorBoolean = true;
+            gameBlankErrorString.append("Game name");
+        }
+
+        if (StringUtils.isBlank(totalTeam)) {
+
+            if (gameBlankErrorBoolean) {
+                gameBlankErrorBoolean = true;
+                gameBlankErrorString.append(", total team");
+            } else {
+                gameBlankErrorBoolean = true;
+                gameBlankErrorString.append("Total team");
+            }
+        }
+
+        if (gameBlankErrorBoolean) {
+            gameBlankErrorString.append(" cannot be blank.");
+            throw new InvalidParameterException(gameBlankErrorString.toString());
+        }
+    }
 }

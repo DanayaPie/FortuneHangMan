@@ -67,4 +67,19 @@ public class TeamDao {
                 .getResultList();
         return teamsToGet;
     }
+
+    public Team getTeamsByGameIdCurrentTeamTurn(int gameId, int teamTurn) {
+        logger.info("TeamDao.getTeamsByGameIdCurrentTeamTurn() invoked");
+
+        try {
+            Team teamToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId AND t.teamTurn = :teamTurn", Team.class)
+                    .setParameter("gameId", gameId)
+                    .setParameter("teamTurn", teamTurn)
+                    .getSingleResult();
+            return teamToGet;
+
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }
