@@ -174,10 +174,10 @@ public class TeamService {
         return teamsToGet;
     }
 
-    public Team getTeamsByGameIdCurrentTeamTurn(int gameId, int teamTurn) throws TeamDoesNotExistException, InvalidParameterException {
-        logger.info("TeamService.getTeamsByGameIdCurrentTeamTurn() invoked");
+    public Team getTeamsByGameIdTeamTurn(int gameId, int teamTurn) throws TeamDoesNotExistException, InvalidParameterException {
+        logger.info("TeamService.getTeamsByGameIdTeamTurn() invoked");
 
-        Team teamsToGet = teamDao.getTeamsByGameIdCurrentTeamTurn(gameId, teamTurn);
+        Team teamsToGet = teamDao.getTeamsByGameIdTeamTurn(gameId, teamTurn);
 
         if (teamsToGet == null) {
             throw new TeamDoesNotExistException("No teams with the game ID of " + gameId + " team turn of " + teamTurn);

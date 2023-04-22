@@ -148,4 +148,21 @@ class TeamDaoUnitTest {
         Assertions.assertTrue(expected.containsAll(actual));
         Assertions.assertTrue(actual.containsAll(expected));
     }
+
+    @Test
+    void getTeamByGameIdTeamTurn_positive() {
+
+        Team actual = teamDaoUnderTest.getTeamsByGameIdTeamTurn(1, 2);
+
+        Team expected = new Team(2, "Donkey", 2, 1, 0);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql("/test-delete-data.sql")
+    void getTeamByGameIdTeamTurn_teamDoesNotExist_negative() {
+
+        Team actual = teamDaoUnderTest.getTeamsByGameIdTeamTurn(1, 2);
+        Assertions.assertNull(actual);
+    }
 }

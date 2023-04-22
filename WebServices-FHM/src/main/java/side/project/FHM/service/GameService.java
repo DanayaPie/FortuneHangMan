@@ -236,7 +236,7 @@ public class GameService {
         if (currentTeamTurn != null) {
             logger.info("Updating current team turn");
 
-            teamService.getTeamsByGameIdCurrentTeamTurn(gameId, currentTeamTurnNumber);
+            teamService.getTeamsByGameIdTeamTurn(gameId, currentTeamTurnNumber);
             gameToUpdate.setCurrentTeamTurn(currentTeamTurnNumber);
         }
 

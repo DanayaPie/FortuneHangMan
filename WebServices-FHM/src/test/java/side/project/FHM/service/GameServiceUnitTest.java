@@ -199,7 +199,7 @@ class GameServiceUnitTest {
         Game gameToUpdate = new Game(1, "FHM Test", 2, word, "STARTED", "FHM", 1, 1, 2);
 
         when(gameDao.getGameByGameId(1)).thenReturn(game);
-        when(teamService.getTeamsByGameIdCurrentTeamTurn(1, 2)).thenReturn(team);
+        when(teamService.getTeamsByGameIdTeamTurn(1, 2)).thenReturn(team);
         when(gameDao.updateGameByGameId(gameToUpdate)).thenReturn(gameToUpdate);
 
         Game actual = gameServiceUnderTest.updateGameByGameId(1, null, null, null, null, "2", null);
@@ -234,7 +234,7 @@ class GameServiceUnitTest {
         Game gameToUpdate = new Game(1, "FHM Test", 2, word, "STARTED", "FHM", 1, 1, 2);
 
         when(wordService.getWordByWordId(2)).thenReturn(wordToUpdate);
-        when(teamService.getTeamsByGameIdCurrentTeamTurn(1, 2)).thenReturn(team);
+        when(teamService.getTeamsByGameIdTeamTurn(1, 2)).thenReturn(team);
         when(gameDao.getGameByGameId(1)).thenReturn(game);
         when(gameDao.updateGameByGameId(gameToUpdate)).thenReturn(gameToUpdate);
 

@@ -169,4 +169,21 @@ class TeamServiceIntegrationTest {
         Throwable actualExceptionThrown = Assertions.assertThrows(TeamDoesNotExistException.class, () -> teamServiceUnderTest.getTeamsByGameId(1));
         Assertions.assertEquals("No teams with the game ID of 1", actualExceptionThrown.getMessage());
     }
+
+    @Test
+    void getTeamsByGameIdTeamTurn_positive() throws TeamDoesNotExistException, InvalidParameterException {
+
+        Team actual = teamServiceUnderTest.getTeamsByGameIdTeamTurn(1, 2);
+
+        Team expected = new Team(2, "Donkey", 2, 1, 0);
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    @Sql("/test-delete-data.sql")
+    void getTeamsByGameIdTeamTurn_teamDoesNotExist_negative() throws TeamDoesNotExistException {
+
+        Throwable actualExceptionThrown = Assertions.assertThrows(TeamDoesNotExistException.class, () -> teamServiceUnderTest.getTeamsByGameIdTeamTurn(1, 2));
+        Assertions.assertEquals("No teams with the game ID of 1 team turn of 2", actualExceptionThrown.getMessage());
+    }
 }

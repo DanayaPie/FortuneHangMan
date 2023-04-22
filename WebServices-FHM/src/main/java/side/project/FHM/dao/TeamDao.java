@@ -68,8 +68,8 @@ public class TeamDao {
         return teamsToGet;
     }
 
-    public Team getTeamsByGameIdCurrentTeamTurn(int gameId, int teamTurn) {
-        logger.info("TeamDao.getTeamsByGameIdCurrentTeamTurn() invoked");
+    public Team getTeamsByGameIdTeamTurn(int gameId, int teamTurn) {
+        logger.info("TeamDao.getTeamsByGameIdTeamTurn() invoked");
 
         try {
             Team teamToGet = entityManager.createQuery("FROM Team t WHERE t.gameId = :gameId AND t.teamTurn = :teamTurn", Team.class)

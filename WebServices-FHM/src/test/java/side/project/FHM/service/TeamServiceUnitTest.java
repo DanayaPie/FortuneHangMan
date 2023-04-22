@@ -127,7 +127,7 @@ class TeamServiceUnitTest {
         when(teamDao.getTeamByTeamId(1)).thenReturn(team);
         when(teamDao.updateTeamByTeamId(teamToUpdate)).thenReturn(teamToUpdate);
 
-        Team actual = teamServiceUnderTest.updateTeamByTeamId(1, "2", "100");
+        Team actual = teamServiceUnderTest.updateTeamByTeamId(1, "2", null);
 
         Team expected = new Team(1, "Shrek", 1, 2, 0);
         Assertions.assertEquals(expected, actual);
@@ -142,7 +142,7 @@ class TeamServiceUnitTest {
         when(teamDao.getTeamByTeamId(1)).thenReturn(team);
         when(teamDao.updateTeamByTeamId(teamToUpdate)).thenReturn(teamToUpdate);
 
-        Team actual = teamServiceUnderTest.updateTeamByTeamId(1, "1", "100");
+        Team actual = teamServiceUnderTest.updateTeamByTeamId(1, null, "100");
 
         Team expected = new Team(1, "Shrek", 1, 1, 100);
         Assertions.assertEquals(expected, actual);
@@ -225,5 +225,27 @@ class TeamServiceUnitTest {
 
         Throwable actualExceptionThrown = Assertions.assertThrows(TeamDoesNotExistException.class, () -> teamServiceUnderTest.getTeamsByGameId(1));
         Assertions.assertEquals("No teams with the game ID of 1", actualExceptionThrown.getMessage());
+    }
+
+    @Test
+    void getTeamsByGameIdTeamTurn_positive() throws TeamDoesNotExistException, InvalidParameterException {
+
+        Team team = new Team(2, "Donkey", 2, 1, 0);
+
+        when(teamDao.getTeamsByGameIdTeamTurn(1, 2)).thenReturn(team);
+        Team actual = teamServiceUnderTest.getTeamsByGameIdTeamTurn(1, 2);
+
+        Team expected = new Team(2, "Donkey", 2, 1, 0);
+
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    void getTeamsByGameIdTeamTurn_teamDoesNotExist_negative() throws TeamDoesNotExistException {
+
+        when(teamDao.getTeamsByGameIdTeamTurn(1, 2)).thenReturn(null);
+
+        Throwable actualExceptionThrown = Assertions.assertThrows(TeamDoesNotExistException.class, () -> teamServiceUnderTest.getTeamsByGameIdTeamTurn(1, 2));
+        Assertions.assertEquals("No teams with the game ID of 1 team turn of 2", actualExceptionThrown.getMessage());
     }
 }

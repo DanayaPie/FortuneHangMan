@@ -100,7 +100,7 @@ public class TeamController {
         logger.info("TeamController.getTeamsByGameIdTeamTurn() invoked");
 
         try {
-            Team teamsToGet = teamService.getTeamsByGameIdCurrentTeamTurn(gameId, teamTurn);
+            Team teamsToGet = teamService.getTeamsByGameIdTeamTurn(gameId, teamTurn);
             return ResponseEntity.status(200).body(teamsToGet);
 
         } catch (TeamDoesNotExistException | InvalidParameterException e) {
