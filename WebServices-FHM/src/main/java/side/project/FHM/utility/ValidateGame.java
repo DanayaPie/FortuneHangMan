@@ -27,7 +27,7 @@ public class ValidateGame {
         }
     }
 
-    public static void gameNameAndTotalTeamBlank(String gameName, String totalTeam) throws InvalidParameterException {
+    public static void validateGameNameTotalTeamBlank(String gameName, String totalTeam) throws InvalidParameterException {
         logger.info("ValidateGame.gameNameAndTotalTeamBlank() invoked");
 
         boolean gameBlankErrorBoolean = false;

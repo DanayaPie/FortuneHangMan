@@ -44,7 +44,7 @@ public class GameService {
     public Game addGame(String gameName, String totalTeam) throws InvalidParameterException {
         logger.info("GameService.addGame() invoked");
 
-        ValidateGame.gameNameAndTotalTeamBlank(gameName, totalTeam);
+        ValidateGame.validateGameNameTotalTeamBlank(gameName, totalTeam);
 
         gameName = gameName.trim();
 
