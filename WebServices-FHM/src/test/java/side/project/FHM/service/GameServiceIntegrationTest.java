@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import side.project.FHM.dao.GameDao;
 import side.project.FHM.exception.GamesDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
 import side.project.FHM.exception.TeamDoesNotExistException;
@@ -24,15 +23,6 @@ class GameServiceIntegrationTest {
 
     @Autowired
     private GameService gameServiceUnderTest;
-
-    @Autowired
-    private GameDao gameDao;
-
-    @Autowired
-    private WordService wordService;
-
-    @Autowired
-    private TeamService teamService;
 
     @Test
     void getAllGames_positive() throws GamesDoesNotExistException {

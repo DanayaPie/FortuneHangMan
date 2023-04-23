@@ -17,7 +17,7 @@ public class ValidateRound {
         logger.info("ValidateRound.validateSpinToken() invoked");
 
         if (!spinToken.equalsIgnoreCase("true") && !spinToken.equalsIgnoreCase("false")) {
-            throw new InvalidParameterException("Spin token must be either TRUE or FALSE");
+            throw new InvalidParameterException("Spin token must be either TRUE or FALSE.");
         }
 
     }

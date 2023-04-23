@@ -26,7 +26,7 @@ class RoundDaoUnitTest {
 
     @Autowired
     @Qualifier("RoundDaoTest")
-    private RoundSeqDaoForTesting testRoundDaoUnderTest;
+    private RoundSeqForRoundDaoTesting testRoundDaoUnderTest;
 
     @Test
     void getAllRounds_positive() {
@@ -199,7 +199,7 @@ class RoundDaoUnitTest {
     }
 
     @Test
-    @Sql("/test-roundSeq.sql")
+    @Sql("/testRoundDao-roundSeq.sql")
     void getSequenceId_positive() {
 
         Long actual = testRoundDaoUnderTest.getSequenceId();

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import side.project.FHM.exception.GamesDoesNotExistException;
 import side.project.FHM.exception.InvalidParameterException;
 import side.project.FHM.exception.RoundDoesNotExistException;
 import side.project.FHM.exception.TeamDoesNotExistException;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@CrossOrigin(origins = {"http://localhost:8080","http://localhost:3000"},maxAge = 3600)
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"}, maxAge = 3600)
 @RestController
 public class RoundController {
 
@@ -35,7 +36,8 @@ public class RoundController {
             Set<Round> allRounds = roundService.getAllRounds();
             return ResponseEntity.status(200).body(allRounds);
 
-        } catch (InvalidParameterException | RoundDoesNotExistException e) {
+        } catch (RoundDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -57,7 +59,8 @@ public class RoundController {
             List<Round> roundsToAdd = roundService.addRound(teamIds, jsonObj.getInt("gameId"));
             return ResponseEntity.status(200).body(roundsToAdd);
 
-        } catch (InvalidParameterException | TeamDoesNotExistException e) {
+        } catch (InvalidParameterException | TeamDoesNotExistException | GamesDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -70,7 +73,8 @@ public class RoundController {
             List<Round> roundsToGet = roundService.getRoundsByRoundId(roundId);
             return ResponseEntity.status(200).body(roundsToGet);
 
-        } catch (InvalidParameterException e) {
+        } catch (RoundDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -83,7 +87,8 @@ public class RoundController {
         try {
             Round roundToGet = roundService.getRoundByRoundIdTeamId(roundId, teamId);
             return ResponseEntity.status(200).body(roundToGet);
-        } catch (InvalidParameterException e) {
+        } catch (RoundDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -96,7 +101,8 @@ public class RoundController {
         try {
             List<Round> roundsToGet = roundService.getRoundsByRoundIdGameId(roundId, gameId);
             return ResponseEntity.status(200).body(roundsToGet);
-        } catch (InvalidParameterException e) {
+        } catch (RoundDoesNotExistException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
@@ -115,7 +121,8 @@ public class RoundController {
                     , json.get("spinToken"));
 
             return ResponseEntity.status(200).body(roundToUpdate);
-        } catch (InvalidParameterException e) {
+        } catch (RoundDoesNotExistException | InvalidParameterException e) {
+            e.getStackTrace();
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

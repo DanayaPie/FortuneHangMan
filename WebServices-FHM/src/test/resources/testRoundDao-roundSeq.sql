@@ -19,7 +19,9 @@ INSERT INTO game (
 	('test', 1, null, 'STARTED', null, 1, 1, 2);
 
 -- round
-CREATE SEQUENCE round_seq
+DROP TABLE IF EXISTS round_seq_dao;
+
+CREATE SEQUENCE round_seq_dao
 	AS int
 	START WITH 1
 	INCREMENT BY 1
@@ -28,4 +30,4 @@ CREATE SEQUENCE round_seq
 INSERT INTO round (
 	round_id, team_id, game_id, round_score, spin_score, spin_token)
 VALUES
-	(nextval('round_seq'), 1, 1, 0, 0, false);
+	(nextval('round_seq_dao'), 1, 1, 0, 0, false);

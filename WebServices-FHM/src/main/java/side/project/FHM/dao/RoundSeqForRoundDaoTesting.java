@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Qualifier("RoundDaoTest")
-public class RoundSeqDaoForTesting extends RoundDao {
+public class RoundSeqForRoundDaoTesting extends RoundDao {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -15,7 +15,7 @@ public class RoundSeqDaoForTesting extends RoundDao {
     @Override
     public Long getSequenceId() {
 
-        Long roundSeqId = (Long) entityManager.createNativeQuery("SELECT nextval('round_seq')").getSingleResult();
+        Long roundSeqId = (Long) entityManager.createNativeQuery("SELECT nextval('round_seq_dao')").getSingleResult();
         return roundSeqId;
     }
 }

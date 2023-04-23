@@ -305,7 +305,7 @@ class GameServiceUnitTest {
     }
 
     @Test
-    void updateGameByGameId_allIntValueNotInt_negative() throws GamesDoesNotExistException, InvalidParameterException, WordDoesNotExistException, TeamDoesNotExistException {
+    void updateGameByGameId_allIntValuesNotInt_negative() throws GamesDoesNotExistException, InvalidParameterException, WordDoesNotExistException, TeamDoesNotExistException {
 
         Word word = new Word(1, "FRUIT", "MANGO");
         Game game = new Game(1, "FHM Test", 1, word, "STARTED", "FHM", 1, 1, 2);
