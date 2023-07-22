@@ -42,11 +42,11 @@ public class WordService {
     public Word addWord(Set<Word> wordInDb, String category, String word) throws InvalidParameterException, WordAlreadyExistException {
         logger.info("WordService.addWord() invoked");
 
-        ValidateWord.validateCategoryAndWordBlank(category, word); // validate blank inputs
-        ValidateWord.validateCategoryAndWordChar(category, word); // validate characters in inputs
-
         String categoryCaps = category.trim().toUpperCase();
         String wordCaps = word.trim().toUpperCase();
+
+        ValidateWord.validateCategoryAndWordBlank(categoryCaps, wordCaps); // validate blank inputs
+        ValidateWord.validateCategoryAndWordChar(categoryCaps, wordCaps); // validate characters in inputs
 
         // create wordToAdd instance to be compares to wordInDb
         Word wordToAdd = new Word();
