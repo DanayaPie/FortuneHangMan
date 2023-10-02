@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Fortune Hangman is a competitive word/phrase guessing game where players earn points and compete for the highest score. It features multiple rounds based on the number of players, with each round involving the selection of a category and a randomly chosen word. Players take turns spinning a wheel to determine the points they can earn for correctly guessing a letter. If a player guesses incorrectly, their turn ends, and the next player takes a turn. Vowels can be guessed at the cost of 250 points. The round concludes when the word/phase is guessed, and the game ends when all players have chosen a category. Note that the rules may vary between the User Interface and Command Line versions of the game.
+Fortune Hangman is a competitive word/phrase guessing game where players earn points and compete for the highest score. It features multiple rounds based on the number of players, with each round involving the selection of a category and a randomly chosen word. Players take turns spinning a wheel to determine the points they can earn for correctly guessing a letter. If a player guesses incorrectly, their turn ends and the next player takes a turn. Vowels can be guessed at the cost of 250 points. The round concludes when the word/phrase is guessed, and the game ends when all players have chosen a category. Note that the rules may vary between the User Interface and Command Line versions of the game.
 
 Fortune Hangman is implemented as a full-stack application. The backend is built using Java, Spring Boot, Apache, and Hibernate, while the frontend utilizes React, HTML, and CSS. Additionally, the Command Line version of the game is developed using Java, Apache, and Jackson.
 
