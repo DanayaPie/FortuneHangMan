@@ -885,8 +885,6 @@ public class PlayGame {
                     System.out.println();
                     System.out.println("Too bad! You guessed wrong! Next team turn.");
                     System.out.println();
-                    System.out.println("Your information:");
-                    printContestantInformation();
 
                     round.setSpinScore(0);
                     updateRoundDb();
@@ -1180,7 +1178,7 @@ public class PlayGame {
                 } else { // no token
 
                     System.out.println();
-                    System.out.println("You spend too much money you went BANKRUPT. You lose all your money from this round. You are too broke to continue playing.");
+                    System.out.println("You went BANKRUPT! You lose all your money from this round. You are too broke, your turn end here");
 
                     round.setSpinScore(0);
                     round.setRoundScore(0);

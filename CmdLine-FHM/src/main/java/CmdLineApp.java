@@ -13,7 +13,7 @@ public class CmdLineApp {
         System.out.println("        |        $  $  $");
         System.out.println("     -------      $$$$$");
         System.out.println(" ================================");
-        System.out.println("|  Welcome to Fortune Hang Man!  |");
+        System.out.println("|  Welcome to Fortune Hangman!  |");
         System.out.println(" ================================");
 
         /*
